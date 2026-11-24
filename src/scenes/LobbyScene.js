@@ -3,6 +3,7 @@ import { ref, onValue } from 'firebase/database';
 import AreaScene from './AreaScene.js';
 import { tryEnter, ROOM_MAX } from '../net/RoomNet.js';
 import { openSoloMenu, GAME_BY_ID } from '../ui/gameMenu.js';
+import { openBoard } from '../ui/boardUi.js';
 import * as hud from '../ui/hud.js';
 
 const DOOR_DEPTH = 6; // 문 안쪽으로 이만큼(px) 걸어 들어가면 입장
@@ -30,6 +31,7 @@ export default class LobbyScene extends AreaScene {
     this.hasSeatMenu = true;
     this.entering = false;
     this.playing = null;
+    this.boardOpen = false;
 
     // 단체 게임방 문
     this.doors = this.objects
@@ -46,6 +48,14 @@ export default class LobbyScene extends AreaScene {
         };
       });
 
+    // 게시판: 클릭하거나 근처에서 E
+    const b = this.objectByName('board');
+    this.board = { x: b.x, y: b.y, w: b.width, h: b.height, label: this.makeLabel('board-label', '📌 게시판') };
+    this.add
+      .zone(b.x + b.width / 2, b.y + b.height / 2, b.width, b.height)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => this.openBoard());
+
     // 시작 위치: 처음이면 입구, 방에서 나왔으면 그 방 문 앞
     const door = this.doors.find((d) => d.room === this.fromRoom);
     const spawn = door ? door.spawn : this.objectByName('spawn');
@@ -61,12 +71,36 @@ export default class LobbyScene extends AreaScene {
   }
 
   // ── 문 위 "방 1 · 3/6 🔒" 표시 ──
-  makeDoorLabel(room) {
+  makeDoorLabel() {
+    return this.makeLabel('door-label', '');
+  }
+
+  // 맵 위에 띄우는 HTML 이름표
+  makeLabel(className, text) {
     const el = document.createElement('div');
-    el.className = 'door-label';
+    el.className = className;
+    el.textContent = text;
     document.getElementById('tags').appendChild(el);
     this.cleanups.push(() => el.remove());
     return el;
+  }
+
+  // ── 게시판 ──
+  nearInteraction() {
+    const { x, y } = this.player.feet;
+    const b = this.board;
+    if (x < b.x - 8 || x > b.x + b.w + 8 || y > b.y + b.h + 28) return null;
+    return { hint: 'E: 게시판 보기', action: () => this.openBoard() };
+  }
+
+  async openBoard() {
+    if (this.boardOpen || this.leaving) return;
+    if (!this.session) return hud.toast('혼자 모드에서는 게시판을 쓸 수 없어요.');
+    this.boardOpen = true;
+    this.setTyping(true);
+    await openBoard({ db: this.session.db, uid: this.session.uid, name: this.profile.name });
+    this.boardOpen = false;
+    if (this.sys.isActive()) this.setTyping(false);
   }
 
   // 로비에서는 rooms/* 대신 작은 거울 데이터만 구독한다 (무료 한도 절약)
@@ -100,6 +134,8 @@ export default class LobbyScene extends AreaScene {
 
   // ── 매 프레임: 문 이름표 위치, 문으로 들어가는지 확인 ──
   areaUpdate() {
+    const bp = this.toScreen(this.board.x + this.board.w / 2, this.board.y);
+    this.board.label.style.transform = `translate(${Math.round(bp.x)}px, ${Math.round(bp.y)}px)`;
     for (const d of this.doors) {
       const p = this.toScreen(d.rect.x + d.rect.w / 2, d.rect.y);
       d.label.style.transform = `translate(${Math.round(p.x)}px, ${Math.round(p.y)}px)`;

@@ -3,7 +3,7 @@
 import { REACTIONS } from '../data/reactions.js';
 
 const $ = (id) => document.getElementById(id);
-const MODALS = ['notice', 'avatar', 'games', 'kiosk', 'game-modal', 'delegate'];
+const MODALS = ['notice', 'avatar', 'games', 'kiosk', 'game-modal', 'delegate', 'board'];
 
 let handlers = {}; // { onStand, onMenu, onAvatar, onSend, onTyping }
 export function bind(h) {

@@ -109,6 +109,45 @@
           ".write": "auth != null && !newData.exists()"
         }
       }
+    },
+    "board": {
+      "posts": {
+        ".read": "auth != null",
+        "$slot": {
+          ".write": "auth != null && $slot.matches(/^[0-9]$/) && ((newData.exists() && (!data.exists() || (root.child('board/posts/0/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/1/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/2/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/3/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/4/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/5/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/6/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/7/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/8/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/9/createdAt').val() >= data.child('createdAt').val()))) || (!newData.exists() && data.exists() && root.child('board/deleteTickets/' + $slot + '/' + auth.uid).val() === root.child('board/postSecrets/' + $slot).val()))",
+          ".validate": "newData.hasChildren(['image', 'name', 'date', 'createdAt'])",
+          "image": {
+            ".validate": "newData.isString() && newData.val().beginsWith('data:image/') && newData.val().length <= 140000"
+          },
+          "name": {
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 16"
+          },
+          "date": {
+            ".validate": "newData.isString() && newData.val().matches(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/)"
+          },
+          "createdAt": {
+            ".validate": "newData.val() === now"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "postSecrets": {
+        "$slot": {
+          ".write": "auth != null && ((newData.exists() && newData.parent().parent().child('posts/' + $slot + '/createdAt').val() === now) || (!newData.exists() && root.child('board/deleteTickets/' + $slot + '/' + auth.uid).val() === root.child('board/postSecrets/' + $slot).val()))",
+          ".validate": "newData.isString() && newData.val().matches(/^[0-9]{4}$/)"
+        }
+      },
+      "deleteTickets": {
+        "$slot": {
+          ".write": "auth != null && !newData.exists()",
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid",
+            ".validate": "newData.isString() && newData.val().matches(/^[0-9]{4}$/)"
+          }
+        }
+      }
     }
   }
 }

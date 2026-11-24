@@ -11,7 +11,7 @@
  "tilewidth": 16,
  "tileheight": 16,
  "nextlayerid": 6,
- "nextobjectid": 18,
+ "nextobjectid": 19,
  "layers": [
   {
    "id": 1,
@@ -1204,10 +1204,10 @@
     5,
     4,
     4,
-    4,
-    4,
-    4,
-    4,
+    50,
+    51,
+    52,
+    53,
     4,
     4,
     5,
@@ -2601,6 +2601,17 @@
     },
     {
      "id": 14,
+     "name": "board",
+     "type": "board",
+     "x": 192,
+     "y": 16,
+     "width": 64,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 15,
      "name": "room-door-1",
      "type": "door",
      "x": 0,
@@ -2623,7 +2634,7 @@
      ]
     },
     {
-     "id": 15,
+     "id": 16,
      "name": "room-door-2",
      "type": "door",
      "x": 0,
@@ -2646,7 +2657,7 @@
      ]
     },
     {
-     "id": 16,
+     "id": 17,
      "name": "room-door-3",
      "type": "door",
      "x": 432,
@@ -2669,7 +2680,7 @@
      ]
     },
     {
-     "id": 17,
+     "id": 18,
      "name": "room-door-4",
      "type": "door",
      "x": 432,
@@ -3004,6 +3015,46 @@
     },
     {
      "id": 45,
+     "properties": [
+      {
+       "name": "collides",
+       "type": "bool",
+       "value": true
+      }
+     ]
+    },
+    {
+     "id": 49,
+     "properties": [
+      {
+       "name": "collides",
+       "type": "bool",
+       "value": true
+      }
+     ]
+    },
+    {
+     "id": 50,
+     "properties": [
+      {
+       "name": "collides",
+       "type": "bool",
+       "value": true
+      }
+     ]
+    },
+    {
+     "id": 51,
+     "properties": [
+      {
+       "name": "collides",
+       "type": "bool",
+       "value": true
+      }
+     ]
+    },
+    {
+     "id": 52,
      "properties": [
       {
        "name": "collides",

@@ -139,6 +139,56 @@
       #delegate-list { display: flex; flex-direction: column; gap: 8px; }
       #delegate-list button { text-align: left; background: #3a2717; border: 1px solid #6e4a2d; }
       #delegate-list button:hover { border-color: #d4ad3a; }
+      /* 게시판 */
+      #board[hidden], #board-view[hidden], #board-form[hidden], #board-list[hidden], #board-new[hidden], #board-preview[hidden], #board-drop-text[hidden] { display: none; }
+      #board .panel { max-width: 860px; max-height: calc(100vh - 32px); display: flex; flex-direction: column; }
+      .board-head { display: flex; align-items: center; gap: 10px; }
+      .board-head h2 { margin: 0; flex: 1; }
+      .board-head button { cursor: pointer; padding: 6px 12px; border: 0; border-radius: 6px; font: bold 14px sans-serif; background: #4a3322; color: #f3e3c3; }
+      .board-head #board-new { background: #d4ad3a; color: #2a1a0e; }
+      #board-count { font-size: 13px; color: #c9b48f; font-weight: normal; margin-left: 6px; }
+      #board-list {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 22px 16px;
+        padding: 24px 16px 16px; margin-top: 10px; overflow-y: auto; min-height: 220px;
+        background: #c49a6c radial-gradient(#b08458 1px, transparent 1px) 0 0 / 7px 7px;
+        border: 6px solid #6e4522; border-radius: 6px;
+      }
+      .board-empty { grid-column: 1 / -1; text-align: center; color: #4a2e16 !important; font-size: 14px !important; margin: 60px 0 !important; }
+      .paper { position: relative; padding: 12px 8px 8px; background: #fffdf5; box-shadow: 0 3px 6px rgba(0,0,0,.35); color: #2a1a0e; }
+      .paper img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; cursor: zoom-in; background: #eee; }
+      .paper-meta { display: flex; justify-content: space-between; gap: 6px; margin-top: 6px; font-size: 12px; }
+      .paper-meta b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .paper-meta span { color: #7a6a48; flex: none; }
+      .pin {
+        position: absolute; left: 50%; top: -9px; translate: -50% 0; width: 20px; height: 20px; padding: 0; cursor: pointer;
+        border: 0; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ff8a8a, #d03030 55%, #8a1a1a);
+        box-shadow: 0 2px 3px rgba(0,0,0,.45);
+      }
+      .pin:hover { scale: 1.2; }
+      #board-form { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; overflow-y: auto; }
+      #board-form label { display: block; margin-bottom: 4px; font-size: 13px; color: #c9b48f; }
+      #board-drop {
+        display: flex; align-items: center; justify-content: center; min-height: 160px; cursor: pointer;
+        border: 2px dashed #6e4a2d; border-radius: 8px; padding: 10px; text-align: center; color: #c9b48f; font-size: 14px;
+      }
+      #board-drop:hover { border-color: #d4ad3a; }
+      #board-preview { max-width: 100%; max-height: 260px; }
+      .board-fields { display: flex; gap: 12px; flex-wrap: wrap; }
+      .board-fields > div { flex: 1; min-width: 140px; }
+      #board-name { display: block; padding: 6px 0; font-weight: bold; }
+      #board-form input[type=date], #board-pw {
+        width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #6e4a2d; border-radius: 6px;
+        background: #1e140b; color: #f3e3c3; font-size: 14px; color-scheme: dark;
+      }
+      #board-msg { min-height: 1em; font-size: 13px; color: #c9b48f; }
+      #board-msg.error { color: #ff9b8a; }
+      #board-view { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.85); cursor: zoom-out; }
+      #board-view img { max-width: 92vw; max-height: 92vh; }
+      .board-label {
+        position: absolute; left: 0; top: 0; white-space: nowrap; translate: -50% 0; margin-top: -24px;
+        padding: 2px 10px; border-radius: 6px; background: #6e4522; color: #ffe9b0; font-size: 13px; font-weight: bold; border: 1px solid #d4ad3a;
+      }
+
       @media (max-width: 760px) { #room-bar { top: 60px; flex-wrap: wrap; justify-content: center; white-space: normal; } #game-panel { bottom: 200px; } }
 
       /* 1인 게임 선택창 */
@@ -287,6 +337,37 @@
         <div class="actions"><button type="button" id="delegate-cancel">취소 (방에 남기)</button></div>
       </div>
     </div>
+    <div id="board" class="modal" tabindex="-1" hidden>
+      <div class="panel">
+        <div class="board-head">
+          <h2>📌 게시판<span id="board-count"></span></h2>
+          <button type="button" id="board-new">＋ 올리기</button>
+          <button type="button" id="board-close">닫기</button>
+        </div>
+        <div id="board-list"></div>
+        <form id="board-form" hidden>
+          <div>
+            <label>캡처 1장 (눌러서 고르기 · 끌어다 놓기 · Ctrl/⌘+V 붙여넣기)</label>
+            <div id="board-drop">
+              <span id="board-drop-text">📷 여기를 눌러 이미지를 고르세요</span>
+              <img id="board-preview" alt="미리보기" hidden />
+            </div>
+            <input type="file" id="board-file" accept="image/*" hidden />
+          </div>
+          <div class="board-fields">
+            <div><label>닉네임</label><span id="board-name"></span></div>
+            <div><label for="board-date">플레이 날짜</label><input type="date" id="board-date" /></div>
+            <div><label for="board-pw">비밀번호 4자리 (삭제할 때 필요)</label><input type="password" id="board-pw" inputmode="numeric" maxlength="4" autocomplete="off" /></div>
+          </div>
+          <div id="board-msg"></div>
+          <div class="actions">
+            <button type="button" id="board-cancel">취소</button>
+            <button type="submit" id="board-submit" class="primary">올리기</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="board-view" hidden><img id="board-view-img" alt="크게 보기" /></div>
     <div id="games" tabindex="-1" hidden>
       <div class="panel">
         <h2>🎲 혼자 할 게임 고르기</h2>

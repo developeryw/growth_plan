@@ -426,6 +426,27 @@ function popcorn() {
   return im;
 }
 
+// 벽에 건 코르크 게시판 (part: 0=왼쪽 끝, 1=가운데, 2=오른쪽 끝)
+function corkBoard(part, seed) {
+  const im = wallFace();
+  const x0 = part === 0 ? 2 : 0;
+  const x1 = part === 2 ? 13 : 15;
+  im.rect(x0, 2, x1 - x0 + 1, 12, '#6e4522'); // 나무 테
+  im.rect(x0 + (part === 0 ? 1 : 0), 3, x1 - x0 + 1 - (part === 0 ? 1 : 0) - (part === 2 ? 1 : 0), 10, '#c49a6c');
+  for (let y = 3; y < 13; y++)
+    for (let x = x0; x <= x1; x++) if ((x * 5 + y * 3 + seed) % 9 === 0 && im.alpha(x, y)) im.px(x, y, '#b08458');
+  // 꽂혀 있는 종이와 압정
+  const papers = [[[4, 5], [10, 7]], [[2, 6], [9, 4]], [[3, 4], [8, 7]]][seed % 3];
+  for (const [px, py] of papers) {
+    const x = Math.min(Math.max(px, x0 + 1), x1 - 4);
+    im.rect(x, py, 4, 5, '#fffdf5');
+    im.rect(x, py + 4, 4, 1, '#e6dcc4');
+    im.px(x + 1, py, '#e04848');
+    im.px(x + 2, py, '#e04848');
+  }
+  return im;
+}
+
 const TILES = [
   ['floorA', () => floor(0)],
   ['floorB', () => floor(2)],
@@ -476,6 +497,10 @@ const TILES = [
   ['kiosk', kiosk],
   ['cola', cola],
   ['popcorn', popcorn],
+  ['corkL', () => corkBoard(0, 0), true],
+  ['corkM', () => corkBoard(1, 1), true],
+  ['corkM2', () => corkBoard(1, 2), true],
+  ['corkR', () => corkBoard(2, 0), true],
 ];
 const COLS = 8;
 const GID = Object.fromEntries(TILES.map(([name], i) => [name, i + 1]));
@@ -699,7 +724,11 @@ function buildMap(tilesetImg) {
   }
   for (const x of [4, 9, 18, 23]) set(wallsL, x, 1, 'lamp');
   for (const x of [2, 3, 24, 25]) set(wallsL, x, 1, 'bookshelf');
-  // 위쪽 가운데(11~16열)는 나중에 게시판 자리로 비워 둔다
+  // 위쪽 가운데: 게시판 (12~15열)
+  set(wallsL, 12, 1, 'corkL');
+  set(wallsL, 13, 1, 'corkM');
+  set(wallsL, 14, 1, 'corkM2');
+  set(wallsL, 15, 1, 'corkR');
   set(wallsL, 13, H - 1, 'doorL');
   set(wallsL, 14, H - 1, 'doorR');
   // 단체 게임방 문 4개 (왼쪽 벽 1·2번, 오른쪽 벽 3·4번)
@@ -758,6 +787,8 @@ function buildMap(tilesetImg) {
         { name: 'kind', type: 'string', value: kind },
       ],
     })),
+    // 게시판 (클릭하거나 근처에서 E)
+    { id: objId++, name: 'board', type: 'board', x: 12 * T, y: 1 * T, width: 4 * T, height: T, rotation: 0, visible: true },
     // 단체 게임방 문: facing = 방에서 나왔을 때 바라보는 방향
     ...roomDoors.map(([x, y, room, facing]) => ({
       id: objId++,

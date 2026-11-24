@@ -11,7 +11,8 @@ export const isOnline = useEmulator || Boolean(firebaseConfig.apiKey);
 const EMULATOR_CONFIG = {
   apiKey: 'demo-key',
   projectId: 'demo-growth',
-  databaseURL: 'http://127.0.0.1:9000?ns=demo-growth',
+  // 보안 규칙(firebase.json)은 기본 인스턴스 이름(프로젝트ID-default-rtdb)에 적용된다
+  databaseURL: 'http://127.0.0.1:9000?ns=demo-growth-default-rtdb',
 };
 
 // 로그인까지 마치고 { db, uid } 를 돌려준다. 설정이 없으면 null.
