@@ -349,9 +349,26 @@ export default class LobbyScene extends Phaser.Scene {
   async chooseGame() {
     if (!this.player.isSitting) return;
     this.setTyping(true);
-    const game = await openSoloMenu(this.playing);
+    const picked = await openSoloMenu(this.playing);
     this.setTyping(false);
-    if (game && this.player.isSitting) this.setPlaying(game.id);
+    if (!picked || !this.player.isSitting) return;
+    this.setPlaying(picked.game.id);
+    this.watchGameTab(picked.win);
+  }
+
+  // 게임 탭을 닫으면 "하는 중" 표시를 지운다 (1초마다 확인)
+  // 로비 탭이 뒤에 있어도 돌도록 Phaser 타이머 대신 브라우저 setInterval을 쓴다
+  watchGameTab(win) {
+    clearInterval(this.gameTabTimer);
+    if (!win) return;
+    const openedAt = Date.now();
+    this.gameTabTimer = setInterval(() => {
+      if (!win.closed) return;
+      clearInterval(this.gameTabTimer);
+      // 열자마자 닫힘으로 보이면, 사이트가 보안 설정으로 연결을 끊은 것일 수 있다 → 표시 유지
+      if (Date.now() - openedAt < 1500) return;
+      this.setPlaying(null);
+    }, 1000);
   }
 
   setPlaying(gameId) {
@@ -365,6 +382,7 @@ export default class LobbyScene extends Phaser.Scene {
     if (!this.player.isSitting) return;
     this.player.standUp();
     hud.showSeatButtons(false);
+    clearInterval(this.gameTabTimer);
     this.setPlaying(null);
   }
 

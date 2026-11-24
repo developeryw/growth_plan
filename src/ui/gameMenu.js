@@ -7,7 +7,17 @@ const $ = (id) => document.getElementById(id);
 export const SOLO_GAMES = games.filter((g) => g.mode === 'solo' || g.mode === 'both');
 export const GAME_BY_ID = Object.fromEntries(games.map((g) => [g.id, g]));
 
-// 선택창을 열고, 고른 게임(또는 닫으면 null)을 돌려준다.
+// 게임을 새 탭으로 열고 그 탭을 돌려준다 (탭이 닫혔는지 확인하는 데 쓴다).
+// 열린 사이트가 우리 페이지를 조작하지 못하도록 opener 연결은 끊어 둔다.
+function openGameTab(url) {
+  const win = window.open('about:blank', '_blank');
+  if (!win) return null; // 팝업이 차단됨
+  win.opener = null;
+  win.location.href = url;
+  return win;
+}
+
+// 선택창을 열고, { game, win }(또는 닫으면 null)을 돌려준다.
 // 새 탭은 클릭하는 그 순간에 열어야 브라우저 팝업 차단에 걸리지 않는다.
 export function openSoloMenu(currentId) {
   const menu = $('games');
@@ -37,8 +47,7 @@ export function openSoloMenu(currentId) {
       const btn = e.target.closest('button');
       if (btn?.dataset.id) {
         const game = GAME_BY_ID[btn.dataset.id];
-        window.open(game.url, '_blank', 'noopener');
-        finish(game);
+        finish({ game, win: openGameTab(game.url) });
       } else if (btn?.id === 'games-close' || e.target === menu) {
         finish(null);
       }
