@@ -3,6 +3,7 @@ import Player, { createPlayerAnims } from '../objects/Player.js';
 import LobbyNet from '../net/LobbyNet.js';
 import { fetchProfile, saveProfile } from '../data/profile.js';
 import { openAvatarDialog } from '../ui/avatarDialog.js';
+import { openSoloMenu, GAME_BY_ID } from '../ui/gameMenu.js';
 import { REACTIONS, AFK_MS } from '../data/reactions.js';
 import * as hud from '../ui/hud.js';
 
@@ -86,6 +87,7 @@ export default class LobbyScene extends Phaser.Scene {
     this.lastInputAt = Date.now();
     this.input.on('pointerdown', () => (this.lastInputAt = Date.now()));
     hud.onStandClick(() => this.standUp());
+    hud.onMenuClick(() => this.chooseGame());
     hud.onAvatarClick(() => this.editAvatar());
     hud.renderReactionHelp();
     hud.setupChat({
@@ -110,7 +112,7 @@ export default class LobbyScene extends Phaser.Scene {
         onChat: (msg, isNew) => this.showChat(msg, isNew),
         onKicked: () => this.onKicked(),
       });
-      this.net.start({ ...this.lastSent, reaction: null, reactionAt: 0 });
+      this.net.start({ ...this.lastSent, reaction: null, reactionAt: 0, playing: null });
     }
     this.updateStatus();
   }
@@ -232,6 +234,8 @@ export default class LobbyScene extends Phaser.Scene {
     } else if (!seat && p.isSitting) {
       p.standUp(s.x, s.y);
     }
+    // 하고 있는 1인 게임
+    if (first || s.playing !== prev.playing) p.setPlaying(GAME_BY_ID[s.playing]?.name ?? null);
     // 아바타를 바꿨으면 프로필을 다시 읽어 모습을 바꾼다
     if (!first && s.profileV !== prev.profileV) {
       fetchProfile(this.session.db, r.uid, true).then((pf) => this.remotes.get(r.uid)?.player.setLook(pf));
@@ -336,14 +340,32 @@ export default class LobbyScene extends Phaser.Scene {
       this.player.sitOn(this.nearSeat);
       this.seatMarker.setVisible(false);
       hud.setHint(`${SEAT_NAMES[this.nearSeat.kind]}에 앉아 있어요 · E 또는 방향키: 일어나기`);
-      hud.showStandButton(true);
+      hud.showSeatButtons(true);
+      this.chooseGame(); // 앉으면 바로 1인 게임 선택창
     }
+  }
+
+  // 1인 게임 선택창 → 고르면 새 탭이 열리고 머리 위에 "하는 중" 표시
+  async chooseGame() {
+    if (!this.player.isSitting) return;
+    this.setTyping(true);
+    const game = await openSoloMenu(this.playing);
+    this.setTyping(false);
+    if (game && this.player.isSitting) this.setPlaying(game.id);
+  }
+
+  setPlaying(gameId) {
+    if (this.playing === gameId) return;
+    this.playing = gameId;
+    this.player.setPlaying(GAME_BY_ID[gameId]?.name ?? null);
+    this.net?.send({ playing: gameId });
   }
 
   standUp() {
     if (!this.player.isSitting) return;
     this.player.standUp();
-    hud.showStandButton(false);
+    hud.showSeatButtons(false);
+    this.setPlaying(null);
   }
 
   onKicked() {

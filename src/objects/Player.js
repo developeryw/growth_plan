@@ -45,7 +45,8 @@ export default class Player {
 
     this.tag = document.createElement('div');
     this.tag.className = 'tag' + (isMe ? ' me' : '');
-    this.tag.innerHTML = '<div class="bubble" hidden></div><div class="reaction" hidden></div><div class="name"></div>';
+    this.tag.innerHTML =
+      '<div class="bubble" hidden></div><div class="reaction" hidden></div><div class="playing" hidden></div><div class="name"></div>';
     this.tag.querySelector('.name').textContent = name;
     document.getElementById('tags').appendChild(this.tag);
 
@@ -119,6 +120,13 @@ export default class Player {
 
   teleport(x, y) {
     this.anchor.body.reset(x, y);
+  }
+
+  // 머리 위 "🎲 ○○ 하는 중" (null이면 지움)
+  setPlaying(gameName) {
+    const el = this.tag.querySelector('.playing');
+    el.textContent = gameName ? `🎲 ${gameName} 하는 중` : '';
+    el.hidden = !gameName;
   }
 
   say(text) {

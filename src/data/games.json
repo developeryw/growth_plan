@@ -1,0 +1,11 @@
+[
+  { "id": "boardgames-zone", "name": "보드게임존", "url": "https://boardgames.zone/ko", "mode": "solo", "join": "none", "players": "1+" },
+  { "id": "yesno-detective", "name": "예스노 탐정", "url": "https://yesnodetective.com/ko", "mode": "solo", "join": "none", "players": "1+" },
+  { "id": "puzzle-loop", "name": "질긴 고리", "url": "https://ko.puzzle-loop.com", "mode": "solo", "join": "none", "players": "1" },
+  { "id": "semantle", "name": "꼬맨틀", "url": "https://semantle-ko.newsjel.ly", "mode": "solo", "join": "none", "players": "1" },
+  { "id": "newmantle", "name": "뉴맨틀", "url": "https://newmantle.kr", "mode": "solo", "join": "none", "players": "1" },
+  { "id": "wall-go", "name": "벽바둑", "url": "https://quoridorgame.com/ko/wall-go/", "mode": "solo", "join": "none", "players": "1+" },
+  { "id": "murdoku", "name": "머도쿠", "url": "https://murdoku.com/ko", "mode": "solo", "join": "none", "players": "1" },
+  { "id": "bloods-devil", "name": "블러드 데블", "url": "https://devil.haplate.com", "mode": "solo", "join": "none", "players": "1+" },
+  { "id": "quoridor", "name": "쿼리도", "url": "https://quoridorgame.com/ko/", "mode": "both", "join": "invite-link", "players": "2-4" }
+]

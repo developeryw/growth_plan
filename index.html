@@ -29,6 +29,10 @@
         background: #fffdf5; color: #2a1a0e; font-size: 13px; text-align: center;
         box-shadow: 0 1px 0 rgba(0,0,0,.3);
       }
+      .tag .playing {
+        margin-bottom: 3px; padding: 2px 8px; border-radius: 8px;
+        background: #2f5d50; color: #f3e3c3; font-size: 12px; border: 1px solid #4a8a77;
+      }
       .tag .reaction { font-size: 22px; margin-bottom: 2px; animation: pop .25s ease-out; }
       .tag [hidden] { display: none; }
       @keyframes pop { from { transform: scale(.3); } to { transform: scale(1); } }
@@ -42,7 +46,30 @@
         pointer-events: auto; cursor: pointer; padding: 4px 12px; border: 0; border-radius: 6px;
         background: #d4ad3a; color: #2a1a0e; font: bold 14px sans-serif;
       }
-      #stand-btn[hidden], #notice[hidden] { display: none; }
+      #menu-btn { pointer-events: auto; cursor: pointer; padding: 4px 12px; border: 1px solid #d4ad3a; border-radius: 6px;
+        background: transparent; color: #d4ad3a; font: bold 14px sans-serif; }
+      #stand-btn[hidden], #menu-btn[hidden], #notice[hidden], #games[hidden] { display: none; }
+
+      /* 1인 게임 선택창 */
+      #games {
+        position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+        background: rgba(0, 0, 0, 0.6); padding: 16px; z-index: 10; outline: none;
+      }
+      #games .panel { width: 100%; max-width: 460px; padding: 20px; background: #2a1a0e; border: 2px solid #6e4a2d; }
+      #games h2 { margin: 0 0 4px; font-size: 19px; }
+      #games p { margin: 0 0 14px; font-size: 13px; color: #c9b48f; }
+      #games-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-height: 60vh; overflow-y: auto; }
+      #games-list .game {
+        display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left;
+        padding: 10px 12px; cursor: pointer; border: 1px solid #6e4a2d; border-radius: 8px;
+        background: #3a2717; color: #f3e3c3; font: 15px sans-serif;
+      }
+      #games-list .game:hover { background: #4a3322; border-color: #d4ad3a; }
+      #games-list .game.on { border-color: #d4ad3a; box-shadow: inset 0 0 0 1px #d4ad3a; }
+      #games-list small { color: #a8936f; font-size: 11px; }
+      #games .actions { display: flex; justify-content: flex-end; margin-top: 14px; }
+      #games-close { cursor: pointer; padding: 7px 16px; border: 0; border-radius: 6px; background: #4a3322; color: #f3e3c3; font: bold 14px sans-serif; }
+      @media (max-width: 420px) { #games-list { grid-template-columns: 1fr; } }
 
       #status-bar { position: fixed; left: 16px; top: 16px; padding: 6px 8px 6px 12px; display: flex; gap: 10px; align-items: center; }
       #avatar-btn {
@@ -125,12 +152,21 @@
     </div>
     <div id="hud" class="panel">
       <span id="hint">방향키/WASD 이동</span>
+      <button id="menu-btn" hidden>게임 고르기</button>
       <button id="stand-btn" hidden>서기</button>
     </div>
     <div id="notice" hidden>
       <div class="panel">
         <div id="notice-text"></div>
         <button id="notice-btn"></button>
+      </div>
+    </div>
+    <div id="games" tabindex="-1" hidden>
+      <div class="panel">
+        <h2>🎲 혼자 할 게임 고르기</h2>
+        <p>고르면 새 탭에서 열리고, 머리 위에 "하는 중"이 표시돼요.</p>
+        <div id="games-list"></div>
+        <div class="actions"><button type="button" id="games-close">그냥 앉아 있기</button></div>
       </div>
     </div>
     <form id="avatar" hidden>

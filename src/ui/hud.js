@@ -10,8 +10,17 @@ export function setHint(text) {
   $('hint').textContent = text;
 }
 
-export function showStandButton(show) {
+// 앉아 있을 때만 [게임 고르기] [서기] 버튼을 보여 준다
+export function showSeatButtons(show) {
   $('stand-btn').hidden = !show;
+  $('menu-btn').hidden = !show;
+}
+
+export function onMenuClick(fn) {
+  $('menu-btn').addEventListener('click', () => {
+    $('menu-btn').blur();
+    fn();
+  });
 }
 
 export function onStandClick(fn) {
@@ -66,7 +75,7 @@ export function setupChat({ onSend, onFocusChange }) {
   });
   // 게임 중에 Enter를 누르면 채팅 입력창으로
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && document.activeElement !== input && $('notice').hidden && $('avatar').hidden) {
+    if (e.key === 'Enter' && document.activeElement !== input && $('notice').hidden && $('avatar').hidden && $('games').hidden) {
       e.preventDefault();
       input.focus();
     }
