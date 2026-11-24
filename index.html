@@ -23,6 +23,13 @@
         background: rgba(0, 0, 0, 0.55); color: #fff; font-size: 12px;
       }
       .tag.me .name { background: rgba(212, 173, 58, 0.9); color: #2a1a0e; }
+      .tag.host .name::before { content: '👑 '; }
+      .door-label {
+        position: absolute; left: 0; top: 0; transform-origin: 0 0; white-space: nowrap;
+        margin: -22px 0 0 0; translate: -50% 0; padding: 1px 6px; border-radius: 6px;
+        background: rgba(122, 31, 43, 0.92); color: #ffe9b0; font-size: 12px; border: 1px solid #d4ad3a;
+      }
+      .door-label.full { background: rgba(60, 60, 60, 0.92); color: #ddd; border-color: #888; }
       .tag .bubble {
         width: max-content; max-width: 220px; white-space: normal; word-break: keep-all; overflow-wrap: anywhere;
         margin-bottom: 4px; padding: 5px 9px; border-radius: 10px;
@@ -48,7 +55,91 @@
       }
       #menu-btn { pointer-events: auto; cursor: pointer; padding: 4px 12px; border: 1px solid #d4ad3a; border-radius: 6px;
         background: transparent; color: #d4ad3a; font: bold 14px sans-serif; }
-      #stand-btn[hidden], #menu-btn[hidden], #notice[hidden], #games[hidden] { display: none; }
+      #stand-btn[hidden], #menu-btn[hidden], #notice[hidden], #games[hidden],
+      #room-bar[hidden], #kiosk[hidden], #game-panel[hidden], #game-modal[hidden], #delegate[hidden], #toast[hidden],
+      #room-bar button[hidden] { display: none; }
+
+      /* 알림 토스트 */
+      #toast {
+        position: fixed; left: 50%; top: 70px; transform: translateX(-50%); z-index: 20;
+        padding: 10px 16px; border-radius: 10px; background: #fffdf5; color: #2a1a0e; font-size: 14px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.4);
+      }
+
+      /* 단체 게임방: 위쪽 방 정보 줄 */
+      #room-bar {
+        position: fixed; left: 50%; top: 16px; transform: translateX(-50%);
+        display: flex; gap: 8px; align-items: center; padding: 6px 10px; white-space: nowrap;
+      }
+      #room-info { margin-right: 4px; }
+      #room-bar button, .gp-btn {
+        cursor: pointer; padding: 4px 10px; border: 1px solid #d4ad3a; border-radius: 6px;
+        background: transparent; color: #d4ad3a; font: bold 13px sans-serif;
+      }
+      #room-bar #leave-btn { background: #d4ad3a; color: #2a1a0e; }
+
+      /* 공통 모달 */
+      .modal {
+        position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+        background: rgba(0, 0, 0, 0.6); padding: 16px; z-index: 10; outline: none;
+      }
+      .modal .panel { width: 100%; max-width: 480px; padding: 20px; background: #2a1a0e; border: 2px solid #6e4a2d; }
+      .modal h2 { margin: 0 0 4px; font-size: 19px; }
+      .modal p { margin: 0 0 14px; font-size: 13px; color: #c9b48f; }
+      .modal .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+      .modal .actions button, #delegate-list button {
+        cursor: pointer; padding: 7px 16px; border: 0; border-radius: 6px; background: #4a3322; color: #f3e3c3; font: bold 14px sans-serif;
+      }
+      .modal .actions .primary { background: #d4ad3a; color: #2a1a0e; }
+
+      /* 키오스크 메뉴판 */
+      #kiosk-list { display: flex; flex-direction: column; gap: 8px; max-height: 60vh; overflow-y: auto; }
+      .kiosk-game {
+        display: flex; gap: 8px; align-items: center; padding: 10px 12px;
+        border: 1px solid #6e4a2d; border-radius: 8px; background: #3a2717;
+      }
+      .kiosk-game.voted { border-color: #d4ad3a; }
+      .kiosk-game.playing { box-shadow: inset 0 0 0 2px #4a8a77; }
+      .kiosk-name { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+      .kiosk-name b { font-size: 15px; }
+      .kiosk-name small { color: #d4ad3a; }
+      .kiosk-name .voters { font-size: 12px; color: #a8936f; white-space: normal; }
+      .kiosk-game button { cursor: pointer; padding: 6px 10px; border-radius: 6px; font: bold 13px sans-serif; }
+      .vote-btn { border: 1px solid #d4ad3a; background: transparent; color: #d4ad3a; }
+      .play-btn { border: 0; background: #4a8a77; color: #fff; }
+      #kiosk-list .empty { margin: 0; }
+
+      /* 게임·초대 공유 칸 */
+      #game-panel {
+        position: fixed; right: 16px; bottom: 16px; width: 260px; padding: 12px;
+        display: flex; flex-direction: column; gap: 8px; z-index: 5;
+      }
+      #game-panel .gp-title { font-weight: bold; font-size: 15px; }
+      #game-panel p { margin: 0; font-size: 12px; color: #c9b48f; }
+      #game-panel .muted { color: #a8936f; }
+      #game-panel button {
+        cursor: pointer; padding: 6px 10px; border: 1px solid #d4ad3a; border-radius: 6px;
+        background: transparent; color: #d4ad3a; font: bold 13px sans-serif;
+      }
+      #game-panel .gp-open { background: #d4ad3a; color: #2a1a0e; }
+      #game-panel .gp-end { border-color: #6e4a2d; color: #c9b48f; font-weight: normal; }
+      #game-panel .gp-row { display: flex; gap: 6px; }
+      #game-panel input:not([type=checkbox]) {
+        flex: 1; min-width: 0; padding: 6px 8px; border: 1px solid #6e4a2d; border-radius: 6px;
+        background: #1e140b; color: #f3e3c3; font-size: 13px;
+      }
+      #game-panel .gp-code {
+        padding: 8px; border-radius: 8px; background: #fffdf5; color: #2a1a0e;
+        font: bold 26px monospace; text-align: center; letter-spacing: 2px; word-break: break-all;
+      }
+      #game-panel .gp-paste { padding: 14px; border: 2px dashed #6e4a2d; border-radius: 8px; text-align: center; font-size: 13px; outline: none; }
+      #game-panel .gp-paste:focus { border-color: #d4ad3a; }
+      #game-panel .gp-auto { font-size: 12px; color: #c9b48f; display: flex; gap: 6px; align-items: center; }
+      #game-modal-text { font-size: 17px; margin-bottom: 4px; }
+      #delegate-list { display: flex; flex-direction: column; gap: 8px; }
+      #delegate-list button { text-align: left; background: #3a2717; border: 1px solid #6e4a2d; }
+      #delegate-list button:hover { border-color: #d4ad3a; }
+      @media (max-width: 760px) { #room-bar { top: 60px; flex-wrap: wrap; justify-content: center; white-space: normal; } #game-panel { bottom: 200px; } }
 
       /* 1인 게임 선택창 */
       #games {
@@ -159,6 +250,41 @@
       <div class="panel">
         <div id="notice-text"></div>
         <button id="notice-btn"></button>
+      </div>
+    </div>
+    <div id="toast" hidden></div>
+    <div id="room-bar" class="panel" hidden>
+      <span id="room-info"></span>
+      <button id="kiosk-btn">🗳 메뉴판</button>
+      <button id="lock-btn" hidden>🔒 방문 잠그기</button>
+      <button id="disband-btn" hidden>해산</button>
+      <button id="leave-btn">나가기</button>
+    </div>
+    <div id="game-panel" class="panel" hidden></div>
+    <div id="kiosk" class="modal" tabindex="-1" hidden>
+      <div class="panel">
+        <h2>🗳 단체 게임 메뉴판</h2>
+        <p id="kiosk-desc"></p>
+        <div id="kiosk-list"></div>
+        <div class="actions"><button type="button" id="kiosk-close">닫기</button></div>
+      </div>
+    </div>
+    <div id="game-modal" class="modal" tabindex="-1" hidden>
+      <div class="panel">
+        <h2 id="game-modal-text"></h2>
+        <p>버튼을 누르면 새 탭에서 게임이 열려요.</p>
+        <div class="actions">
+          <button type="button" id="game-modal-close">나중에</button>
+          <button type="button" id="game-modal-open" class="primary">🎲 게임 열기</button>
+        </div>
+      </div>
+    </div>
+    <div id="delegate" class="modal" tabindex="-1" hidden>
+      <div class="panel">
+        <h2>👑 다음 방장 고르기</h2>
+        <p>방장이 나가려면 다음 방장을 정해야 해요.</p>
+        <div id="delegate-list"></div>
+        <div class="actions"><button type="button" id="delegate-cancel">취소 (방에 남기)</button></div>
       </div>
     </div>
     <div id="games" tabindex="-1" hidden>

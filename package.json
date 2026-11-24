@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "firebase": "^13.4.0",
+    "jsqr": "^1.4.0",
     "phaser": "^3.90.0"
   },
   "devDependencies": {

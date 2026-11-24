@@ -103,9 +103,11 @@ admins/{uid}
 members/{uid}               사용자가 입력한 입장 코드
 users/{uid}                 { name, gender, color }
 presence/{uid}              { area: "lobby" | "room1"..., tabId, at }
+lobby/roomMembers/{n}/{uid} true — 로비 문 위 인원 표시용 거울 데이터 (창 닫으면 자동 삭제)
+lobby/roomLocks/{n}         true/false — 로비 문 위 잠금 표시용
 lobby/players/{uid}         { x, y, dir, moving, seat, bubble, reaction }
 lobby/chat/{id}
-rooms/{1-4}/                { host, locked, state, game, invite,
+rooms/{1-4}/                { host, locked, state, game: {id, url, at}, invite: {type, value},
                               players/{uid}, votes/{uid}, chat/{id} }
 board/posts/{id}            { image, name, date, createdAt }
 board/postSecrets/{id}      읽기 불가

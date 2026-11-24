@@ -122,6 +122,15 @@ export default class Player {
     this.anchor.body.reset(x, y);
   }
 
+  get name() {
+    return this.tag.querySelector('.name').textContent;
+  }
+
+  // 방장이면 이름 앞에 왕관
+  setHost(isHost) {
+    this.tag.classList.toggle('host', isHost);
+  }
+
   // 머리 위 "🎲 ○○ 하는 중" (null이면 지움)
   setPlaying(gameName) {
     const el = this.tag.querySelector('.playing');

@@ -337,6 +337,95 @@ function table() {
   return im;
 }
 
+// 벽에 난 커튼 문 (단체 게임방 입구). right=true면 오른쪽 벽용
+function curtain(right) {
+  const im = new Img(T, T);
+  im.rect(0, 0, T, T, '#3a2717');
+  im.rect(2, 0, 12, T, '#1f140c');
+  for (let x = 3; x < 13; x++) im.rect(x, 0, 1, T, x % 3 === 0 ? '#6e1824' : x % 3 === 1 ? '#a83040' : '#8c2030');
+  im.rect(3, 7, 10, 2, '#d4ad3a');
+  im.px(7, 9, '#d4ad3a');
+  im.px(8, 9, '#d4ad3a');
+  im.rect(1, 0, 1, T, '#8a5d36');
+  im.rect(14, 0, 1, T, '#8a5d36');
+  return right ? mirror(im) : im;
+}
+
+// 나무 의자. 기본 그림은 아래(down)를 바라봄
+function chair(facing) {
+  let im = new Img(T, T);
+  im.ellipse(8, 9, 6.5, 6.5, SHADOW);
+  im.rect(3, 1, 10, 3, '#4a2e16');
+  im.rect(4, 1, 8, 1, '#8b5a2b');
+  im.rect(3, 4, 10, 9, '#6e4522');
+  im.rect(4, 5, 8, 7, '#7a1f2b');
+  im.rect(5, 6, 3, 2, '#94303d');
+  im.rect(3, 12, 2, 2, '#4a2e16');
+  im.rect(11, 12, 2, 2, '#4a2e16');
+  const turns = { down: 0, left: 1, up: 2, right: 3 }[facing];
+  for (let i = 0; i < turns; i++) im = rotateCW(im);
+  return im;
+}
+
+// 큰 보드게임 테이블 (가장자리는 나무, 가운데는 초록 펠트)
+function bigTable(top, bottom, left, right) {
+  const im = new Img(T, T);
+  for (let y = 0; y < T; y++)
+    for (let x = 0; x < T; x++) {
+      const m = Math.min(top ? y : 99, bottom ? 15 - y : 99, left ? x : 99, right ? 15 - x : 99);
+      let c = '#2f6a4f';
+      if ((x * 7 + y * 3) % 11 === 0) c = '#356f54';
+      if (m === 0) c = '#3a2414';
+      else if (m === 1) c = '#8b5a2b';
+      else if (m <= 3) c = '#6e4522';
+      else if (m === 4) c = '#24503b';
+      im.px(x, y, c);
+    }
+  if (bottom) im.rect(0, 15, T, 1, '#2a1a0e');
+  return im;
+}
+
+function kiosk() {
+  const im = new Img(T, T);
+  im.ellipse(8, 14, 4, 1.5, SHADOW);
+  im.rect(5, 13, 6, 2, '#555a66');
+  im.rect(7, 10, 2, 3, '#777c88');
+  im.rect(2, 1, 12, 10, '#2b2b33');
+  im.rect(3, 2, 10, 8, '#5fb0d0');
+  im.rect(4, 3, 8, 1, '#e8f6ff');
+  for (const y of [5, 7]) {
+    im.rect(4, y, 3, 1, '#d4ad3a');
+    im.rect(8, y, 4, 1, '#bfe6f5');
+  }
+  im.px(7, 11, '#ff6b6b');
+  return im;
+}
+
+function cola() {
+  const im = new Img(T, T);
+  im.ellipse(8, 14, 4, 1.5, SHADOW);
+  im.rect(9, 0, 1, 5, '#ffffff');
+  im.rect(10, 0, 1, 5, '#e05050');
+  im.rect(5, 4, 6, 1, '#eeeeee');
+  im.rect(5, 5, 6, 9, '#d03030');
+  im.rect(6, 5, 1, 9, '#e85a5a');
+  im.rect(5, 9, 6, 2, '#ffffff');
+  im.rect(5, 13, 6, 1, '#a02020');
+  return im;
+}
+
+function popcorn() {
+  const im = new Img(T, T);
+  im.ellipse(8, 14, 5, 1.5, SHADOW);
+  for (let y = 7; y < 15; y++) {
+    const inset = Math.floor((y - 7) / 4);
+    for (let x = 3 + inset; x < 13 - inset; x++) im.px(x, y, Math.floor(x / 2) % 2 ? '#d03030' : '#ffffff');
+  }
+  im.ellipse(8, 5, 5.5, 3.5, '#fff3c4');
+  for (const [x, y] of [[5, 4], [8, 3], [10, 5], [6, 6], [9, 6], [11, 4]]) im.px(x, y, '#f2d27a');
+  return im;
+}
+
 const TILES = [
   ['floorA', () => floor(0)],
   ['floorB', () => floor(2)],
@@ -367,6 +456,26 @@ const TILES = [
   ['hanging', hangingChair, true],
   ['plant', plant, true],
   ['table', table, true],
+  ['curtainL', () => curtain(false)],
+  ['curtainR', () => curtain(true)],
+  ['exitL', () => door(false)],
+  ['exitR', () => door(true)],
+  ['chairDown', () => chair('down'), true],
+  ['chairUp', () => chair('up'), true],
+  ['chairLeft', () => chair('left'), true],
+  ['chairRight', () => chair('right'), true],
+  ['btTL', () => bigTable(1, 0, 1, 0), true],
+  ['btT', () => bigTable(1, 0, 0, 0), true],
+  ['btTR', () => bigTable(1, 0, 0, 1), true],
+  ['btL', () => bigTable(0, 0, 1, 0), true],
+  ['btC', () => bigTable(0, 0, 0, 0), true],
+  ['btR', () => bigTable(0, 0, 0, 1), true],
+  ['btBL', () => bigTable(0, 1, 1, 0), true],
+  ['btB', () => bigTable(0, 1, 0, 0), true],
+  ['btBR', () => bigTable(0, 1, 0, 1), true],
+  ['kiosk', kiosk],
+  ['cola', cola],
+  ['popcorn', popcorn],
 ];
 const COLS = 8;
 const GID = Object.fromEntries(TILES.map(([name], i) => [name, i + 1]));
@@ -593,6 +702,14 @@ function buildMap(tilesetImg) {
   // 위쪽 가운데(11~16열)는 나중에 게시판 자리로 비워 둔다
   set(wallsL, 13, H - 1, 'doorL');
   set(wallsL, 14, H - 1, 'doorR');
+  // 단체 게임방 문 4개 (왼쪽 벽 1·2번, 오른쪽 벽 3·4번)
+  const roomDoors = [
+    [0, 6, 1, 'right'],
+    [0, 13, 2, 'right'],
+    [W - 1, 6, 3, 'left'],
+    [W - 1, 13, 4, 'left'],
+  ];
+  for (const [x, y, , facing] of roomDoors) set(wallsL, x, y, facing === 'right' ? 'curtainL' : 'curtainR');
 
   // 가운데 러그 (10~16열, 8~12행)
   for (let y = 8; y <= 12; y++)
@@ -641,9 +758,116 @@ function buildMap(tilesetImg) {
         { name: 'kind', type: 'string', value: kind },
       ],
     })),
+    // 단체 게임방 문: facing = 방에서 나왔을 때 바라보는 방향
+    ...roomDoors.map(([x, y, room, facing]) => ({
+      id: objId++,
+      name: `room-door-${room}`,
+      type: 'door',
+      x: x * T,
+      y: y * T,
+      width: T,
+      height: T,
+      rotation: 0,
+      visible: true,
+      properties: [
+        { name: 'facing', type: 'string', value: facing },
+        { name: 'room', type: 'int', value: room },
+      ],
+    })),
   ];
 
-  const tileLayer = (id, name, data) => ({ id, name, type: 'tilelayer', data, width: W, height: H, x: 0, y: 0, opacity: 1, visible: true });
+  writeMap('lobby', W, H, [
+    ['floor', floorL],
+    ['rug', rugL],
+    ['walls', wallsL],
+    ['furniture', furnL],
+  ], objects, tilesetImg);
+}
+
+function tiledObject(id, name, type, x, y, w, h, props = {}) {
+  const o = { id, name, type, x, y, width: w, height: h, rotation: 0, visible: true };
+  if (w === 0) o.point = true;
+  const entries = Object.entries(props);
+  if (entries.length)
+    o.properties = entries.map(([k, v]) => ({ name: k, type: Number.isInteger(v) ? 'int' : 'string', value: v }));
+  return o;
+}
+
+// 단체 게임방 (4개 방이 같은 맵을 쓴다)
+function buildRoomMap(tilesetImg) {
+  const W = 16, H = 12;
+  const grid = () => new Array(W * H).fill(0);
+  const floorL = grid(), rugL = grid(), wallsL = grid(), furnL = grid(), topL = grid();
+  const set = (layer, x, y, name) => (layer[y * W + x] = GID[name]);
+
+  for (let y = 1; y < H; y++)
+    for (let x = 1; x < W - 1; x++) set(floorL, x, y, (x * 3 + y * 5) % 7 === 0 ? 'floorB' : 'floorA');
+  for (let x = 0; x < W; x++) {
+    set(wallsL, x, 0, 'wallTop');
+    set(wallsL, x, H - 1, 'wallTop');
+    if (x > 0 && x < W - 1) set(wallsL, x, 1, 'wallFace');
+  }
+  for (let y = 0; y < H; y++) {
+    set(wallsL, 0, y, 'wallTop');
+    set(wallsL, W - 1, y, 'wallTop');
+  }
+  for (const x of [3, 12]) set(wallsL, x, 1, 'lamp');
+  for (const x of [6, 9]) set(wallsL, x, 1, 'bookshelf');
+  set(wallsL, 7, H - 1, 'exitL');
+  set(wallsL, 8, H - 1, 'exitR');
+  set(rugL, 7, H - 2, 'doormat');
+  set(rugL, 8, H - 2, 'doormat');
+
+  // 러그 + 4×3 테이블 (6~9열, 5~7행)
+  for (let y = 3; y <= 9; y++)
+    for (let x = 4; x <= 11; x++) {
+      const v = y === 3 ? 'T' : y === 9 ? 'B' : '';
+      const h = x === 4 ? 'L' : x === 11 ? 'R' : '';
+      set(rugL, x, y, 'rug' + (v + h || 'C'));
+    }
+  for (let y = 5; y <= 7; y++)
+    for (let x = 6; x <= 9; x++) {
+      const v = y === 5 ? 'T' : y === 7 ? 'B' : '';
+      const h = x === 6 ? 'L' : x === 9 ? 'R' : '';
+      set(furnL, x, y, 'bt' + (v + h || 'C'));
+    }
+  set(topL, 7, 6, 'kiosk');
+
+  const seats = [
+    [7, 4, 'down', 'chairDown'],
+    [8, 4, 'down', 'chairDown'],
+    [5, 6, 'right', 'chairRight'],
+    [10, 6, 'left', 'chairLeft'],
+    [7, 8, 'up', 'chairUp'],
+    [8, 8, 'up', 'chairUp'],
+  ];
+  for (const [x, y, , tile] of seats) set(furnL, x, y, tile);
+  for (const [x, y] of [[1, 2], [14, 2], [1, 10], [14, 10]]) set(furnL, x, y, 'plant');
+
+  let id = 1;
+  const objects = [
+    tiledObject(id++, 'spawn', 'spawn', 8 * T, 9 * T + 12, 0, 0),
+    tiledObject(id++, 'exit', 'exit', 7 * T, (H - 1) * T, 2 * T, T),
+    tiledObject(id++, 'kiosk', 'kiosk', 7 * T, 6 * T, T, T),
+    // 게임이 시작되면 테이블에 놓이는 콜라·팝콘 (frame = 타일셋에서 몇 번째 칸인지)
+    tiledObject(id++, 'cola', 'prop', 6 * T + 8, 6 * T + 8, 0, 0, { frame: GID.cola - 1 }),
+    tiledObject(id++, 'popcorn', 'prop', 9 * T + 8, 6 * T + 8, 0, 0, { frame: GID.popcorn - 1 }),
+    ...seats.map(([x, y, facing], i) => tiledObject(id++, `seat-${i + 1}`, 'seat', x * T, y * T, T, T, { facing, kind: 'chair' })),
+  ];
+  writeMap('room', W, H, [
+    ['floor', floorL],
+    ['rug', rugL],
+    ['walls', wallsL],
+    ['furniture', furnL],
+    ['tabletop', topL],
+  ], objects, tilesetImg);
+}
+
+function writeMap(name, W, H, tileLayers, objects, tilesetImg) {
+  const layers = tileLayers.map(([lname, data], i) => ({
+    id: i + 1, name: lname, type: 'tilelayer', data, width: W, height: H, x: 0, y: 0, opacity: 1, visible: true,
+  }));
+  layers.push({ id: layers.length + 1, name: 'objects', type: 'objectgroup', draworder: 'topdown', objects, x: 0, y: 0, opacity: 1, visible: true });
   const map = {
     type: 'map',
     version: '1.10',
@@ -656,15 +880,9 @@ function buildMap(tilesetImg) {
     height: H,
     tilewidth: T,
     tileheight: T,
-    nextlayerid: 6,
-    nextobjectid: objId,
-    layers: [
-      tileLayer(1, 'floor', floorL),
-      tileLayer(2, 'rug', rugL),
-      tileLayer(3, 'walls', wallsL),
-      tileLayer(4, 'furniture', furnL),
-      { id: 5, name: 'objects', type: 'objectgroup', draworder: 'topdown', objects, x: 0, y: 0, opacity: 1, visible: true },
-    ],
+    nextlayerid: layers.length + 1,
+    nextobjectid: Math.max(...objects.map((o) => o.id)) + 1,
+    layers,
     tilesets: [
       {
         firstgid: 1,
@@ -682,7 +900,7 @@ function buildMap(tilesetImg) {
       },
     ],
   };
-  const file = OUT('maps/lobby.json');
+  const file = OUT(`maps/${name}.json`);
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, JSON.stringify(map, null, 1));
   console.log('저장:', path.relative(ROOT, file));
@@ -690,6 +908,8 @@ function buildMap(tilesetImg) {
 
 const tilesetImg = buildTileset();
 buildCharacters();
-const mapFile = OUT('maps/lobby.json');
-if (!fs.existsSync(mapFile) || process.argv.includes('--force-map')) buildMap(tilesetImg);
-else console.log('맵은 이미 있어서 건너뜀 (덮어쓰려면 --force-map)');
+const force = process.argv.includes('--force-map');
+for (const [name, build] of [['lobby', buildMap], ['room', buildRoomMap]]) {
+  if (!fs.existsSync(OUT(`maps/${name}.json`)) || force) build(tilesetImg);
+  else console.log(`${name} 맵은 이미 있어서 건너뜀 (덮어쓰려면 --force-map)`);
+}
