@@ -128,4 +128,5 @@ feedback/{id}
 ## 명령어
 - `npm run dev` — 로컬 실행 (http://localhost:5173)
 - `npm run build` — 배포용 빌드
+- `npm run art` — 타일셋·캐릭터 PNG 다시 생성 (맵 `lobby.json`은 없을 때만 생성, 초기화는 `npm run art -- --force-map`)
 - 배포: `main` 브랜치에 push하면 GitHub Actions가 자동 배포

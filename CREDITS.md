@@ -4,4 +4,5 @@
 
 | 에셋 | 출처 | 라이선스 |
 |---|---|---|
-| (아직 없음) | | |
+| 로비 타일셋 `public/assets/tilesets/lobby.png` | 직접 제작 (`scripts/make-art.js`로 생성) | 프로젝트 자체 제작 |
+| 캐릭터 `public/assets/sprites/*.png` | 직접 제작 (`scripts/make-art.js`로 생성) | 프로젝트 자체 제작 |

@@ -4,13 +4,32 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>온라인 보드게임 카페</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎲</text></svg>" />
     <style>
-      html, body { margin: 0; height: 100%; background: #1e1a16; }
+      html, body { margin: 0; height: 100%; background: #1e1a16; overflow: hidden; }
       #game { width: 100%; height: 100%; }
+      #hud {
+        position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%);
+        display: flex; gap: 10px; align-items: center;
+        padding: 8px 14px; border-radius: 10px;
+        background: rgba(30, 20, 12, 0.85); color: #f3e3c3;
+        font: 14px/1.4 sans-serif; white-space: nowrap;
+        pointer-events: none;
+      }
+      #stand-btn {
+        pointer-events: auto; cursor: pointer;
+        padding: 4px 12px; border: 0; border-radius: 6px;
+        background: #d4ad3a; color: #2a1a0e; font: bold 14px sans-serif;
+      }
+      #stand-btn[hidden] { display: none; }
     </style>
   </head>
   <body>
     <div id="game"></div>
+    <div id="hud">
+      <span id="hint">방향키/WASD 이동</span>
+      <button id="stand-btn" hidden>서기</button>
+    </div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
