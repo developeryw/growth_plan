@@ -129,4 +129,5 @@ feedback/{id}
 - `npm run dev` — 로컬 실행 (http://localhost:5173)
 - `npm run build` — 배포용 빌드
 - `npm run art` — 타일셋·캐릭터 PNG 다시 생성 (맵 `lobby.json`은 없을 때만 생성, 초기화는 `npm run art -- --force-map`)
+- `npm run emulators` — 내 컴퓨터용 Firebase 에뮬레이터 실행(Java 필요). 켠 뒤 http://localhost:5173/?emu 로 접속하면 실제 Firebase 대신 에뮬레이터 사용
 - 배포: `main` 브랜치에 push하면 GitHub Actions가 자동 배포

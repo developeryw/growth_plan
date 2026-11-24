@@ -6,29 +6,85 @@
     <title>온라인 보드게임 카페</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎲</text></svg>" />
     <style>
-      html, body { margin: 0; height: 100%; background: #1e1a16; overflow: hidden; }
+      html, body { margin: 0; height: 100%; background: #1e1a16; overflow: hidden; font-family: sans-serif; }
       #game { width: 100%; height: 100%; }
+      .panel { background: rgba(30, 20, 12, 0.85); color: #f3e3c3; border-radius: 10px; font-size: 14px; line-height: 1.4; }
+
+      /* 머리 위 이름표·말풍선·리액션 */
+      #tags { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+      .tag {
+        position: absolute; left: 0; top: 0; width: 0;
+        display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+        height: 0;
+      }
+      .tag > * { flex: none; white-space: nowrap; }
+      .tag .name {
+        margin-bottom: 2px; padding: 1px 6px; border-radius: 6px;
+        background: rgba(0, 0, 0, 0.55); color: #fff; font-size: 12px;
+      }
+      .tag.me .name { background: rgba(212, 173, 58, 0.9); color: #2a1a0e; }
+      .tag .bubble {
+        width: max-content; max-width: 220px; white-space: normal; word-break: keep-all; overflow-wrap: anywhere;
+        margin-bottom: 4px; padding: 5px 9px; border-radius: 10px;
+        background: #fffdf5; color: #2a1a0e; font-size: 13px; text-align: center;
+        box-shadow: 0 1px 0 rgba(0,0,0,.3);
+      }
+      .tag .reaction { font-size: 22px; margin-bottom: 2px; animation: pop .25s ease-out; }
+      .tag [hidden] { display: none; }
+      @keyframes pop { from { transform: scale(.3); } to { transform: scale(1); } }
+
       #hud {
         position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%);
-        display: flex; gap: 10px; align-items: center;
-        padding: 8px 14px; border-radius: 10px;
-        background: rgba(30, 20, 12, 0.85); color: #f3e3c3;
-        font: 14px/1.4 sans-serif; white-space: nowrap;
-        pointer-events: none;
+        display: flex; gap: 10px; align-items: center; padding: 8px 14px;
+        white-space: nowrap; pointer-events: none;
       }
-      #stand-btn {
-        pointer-events: auto; cursor: pointer;
-        padding: 4px 12px; border: 0; border-radius: 6px;
+      #stand-btn, #notice-btn {
+        pointer-events: auto; cursor: pointer; padding: 4px 12px; border: 0; border-radius: 6px;
         background: #d4ad3a; color: #2a1a0e; font: bold 14px sans-serif;
       }
-      #stand-btn[hidden] { display: none; }
+      #stand-btn[hidden], #notice[hidden] { display: none; }
+
+      #status { position: fixed; left: 16px; top: 16px; padding: 6px 12px; }
+      #reactions { position: fixed; right: 16px; top: 16px; padding: 8px 12px; font-size: 13px; }
+
+      #chat { position: fixed; left: 16px; bottom: 16px; width: 280px; padding: 8px; }
+      #chat-log { max-height: 160px; overflow-y: auto; margin-bottom: 6px; font-size: 13px; }
+      #chat-log .mine b { color: #d4ad3a; }
+      #chat-log b { color: #9fd0ff; }
+      #chat-input {
+        width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #6e4a2d; border-radius: 6px;
+        background: #2a1a0e; color: #f3e3c3; font-size: 14px;
+      }
+
+      #notice {
+        position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+        background: rgba(0, 0, 0, 0.7);
+      }
+      #notice .panel { padding: 24px 28px; text-align: center; font-size: 16px; background: #2a1a0e; }
+      #notice-text { white-space: pre-line; margin-bottom: 16px; }
+
+      /* 좁은 화면에서는 리액션 안내를 숨긴다 */
+      @media (max-width: 760px) { #reactions { display: none; } #chat { width: calc(100% - 32px); bottom: 70px; } }
     </style>
   </head>
   <body>
     <div id="game"></div>
-    <div id="hud">
+    <div id="tags"></div>
+    <div id="status" class="panel"></div>
+    <div id="reactions" class="panel"></div>
+    <div id="chat" class="panel">
+      <div id="chat-log"></div>
+      <input id="chat-input" maxlength="100" placeholder="Enter 눌러 채팅" autocomplete="off" />
+    </div>
+    <div id="hud" class="panel">
       <span id="hint">방향키/WASD 이동</span>
       <button id="stand-btn" hidden>서기</button>
+    </div>
+    <div id="notice" hidden>
+      <div class="panel">
+        <div id="notice-text"></div>
+        <button id="notice-btn"></button>
+      </div>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>

@@ -7,9 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "art": "node scripts/make-art.js"
+    "art": "node scripts/make-art.js",
+    "emulators": "npx --yes firebase-tools@15 emulators:start --project demo-growth"
   },
   "dependencies": {
+    "firebase": "^13.4.0",
     "phaser": "^3.90.0"
   },
   "devDependencies": {
