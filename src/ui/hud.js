@@ -25,6 +25,15 @@ export function setStatus(text) {
   $('status').textContent = text;
 }
 
+export function onAvatarClick(fn) {
+  const btn = $('avatar-btn');
+  btn.hidden = false;
+  btn.addEventListener('click', () => {
+    btn.blur();
+    fn();
+  });
+}
+
 // 화면 가운데 큰 알림 (예: 다른 탭에서 접속 중)
 export function showNotice(message, buttonText, onClick) {
   $('notice-text').textContent = message;
@@ -57,7 +66,7 @@ export function setupChat({ onSend, onFocusChange }) {
   });
   // 게임 중에 Enter를 누르면 채팅 입력창으로
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && document.activeElement !== input && $('notice').hidden) {
+    if (e.key === 'Enter' && document.activeElement !== input && $('notice').hidden && $('avatar').hidden) {
       e.preventDefault();
       input.focus();
     }

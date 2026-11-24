@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import Player, { createPlayerAnims } from '../objects/Player.js';
 import LobbyNet from '../net/LobbyNet.js';
-import { fetchProfile } from '../data/profile.js';
+import { fetchProfile, saveProfile } from '../data/profile.js';
+import { openAvatarDialog } from '../ui/avatarDialog.js';
 import { REACTIONS, AFK_MS } from '../data/reactions.js';
 import * as hud from '../ui/hud.js';
 
@@ -85,6 +86,7 @@ export default class LobbyScene extends Phaser.Scene {
     this.lastInputAt = Date.now();
     this.input.on('pointerdown', () => (this.lastInputAt = Date.now()));
     hud.onStandClick(() => this.standUp());
+    hud.onAvatarClick(() => this.editAvatar());
     hud.renderReactionHelp();
     hud.setupChat({
       onSend: (text) => this.sendChat(text),
@@ -109,10 +111,27 @@ export default class LobbyScene extends Phaser.Scene {
         onKicked: () => this.onKicked(),
       });
       this.net.start({ ...this.lastSent, reaction: null, reactionAt: 0 });
-      hud.setStatus(`${profile.name} · 접속됨`);
-    } else {
-      hud.setStatus('혼자 모드 (Firebase 설정 전)');
     }
+    this.updateStatus();
+  }
+
+  updateStatus() {
+    if (this.net?.kicked) return;
+    hud.setStatus(this.net ? `${this.profile.name} · 접속됨` : `${this.profile.name} · 혼자 모드`);
+  }
+
+  // [아바타 변경] → 설정창 → 저장하면 내 모습을 바꾸고 다른 사람에게 알린다
+  async editAvatar() {
+    this.setTyping(true);
+    const profile = await openAvatarDialog(this.profile, { title: '아바타 변경', submitText: '저장', cancellable: true });
+    this.setTyping(false);
+    if (!profile) return;
+    if (this.session) await saveProfile(this.session.db, this.session.uid, profile);
+    this.profile = profile;
+    this.player.setLook(profile);
+    this.updateStatus();
+    // 다른 사람들은 profileV가 바뀐 것을 보고 내 프로필을 다시 읽는다
+    this.net?.send({ profileV: Date.now() });
   }
 
   addColliders(player) {
@@ -212,6 +231,10 @@ export default class LobbyScene extends Phaser.Scene {
       p.sitOn(seat);
     } else if (!seat && p.isSitting) {
       p.standUp(s.x, s.y);
+    }
+    // 아바타를 바꿨으면 프로필을 다시 읽어 모습을 바꾼다
+    if (!first && s.profileV !== prev.profileV) {
+      fetchProfile(this.session.db, r.uid, true).then((pf) => this.remotes.get(r.uid)?.player.setLook(pf));
     }
     // 리액션: 누른 시각(reactionAt)이 바뀌었을 때만 새로 보여 준다 (같은 리액션 연속도 OK)
     // 처음 들어올 때 이미 있던 리액션은 '졸기'만 보여 준다

@@ -53,6 +53,16 @@ export default class Player {
     scene.events.on('postupdate', this.syncView, this);
   }
 
+  // 성별·옷 색·이름을 바꾼다 (아바타 변경)
+  setLook({ name, gender, color }) {
+    this.bodyKey = `body-${gender}`;
+    this.base.setTexture(this.bodyKey);
+    this.outfit.setTint(color);
+    this.tag.querySelector('.name').textContent = name;
+    if (this.isSitting) this.base.setFrame(this.frameOf(SIT_COL));
+    else this.showIdle();
+  }
+
   get feet() {
     return { x: this.anchor.x, y: this.anchor.y };
   }

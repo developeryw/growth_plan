@@ -44,7 +44,51 @@
       }
       #stand-btn[hidden], #notice[hidden] { display: none; }
 
-      #status { position: fixed; left: 16px; top: 16px; padding: 6px 12px; }
+      #status-bar { position: fixed; left: 16px; top: 16px; padding: 6px 8px 6px 12px; display: flex; gap: 10px; align-items: center; }
+      #avatar-btn {
+        cursor: pointer; padding: 3px 10px; border: 1px solid #d4ad3a; border-radius: 6px;
+        background: transparent; color: #d4ad3a; font: 13px sans-serif;
+      }
+      #avatar-btn[hidden] { display: none; }
+
+      /* 아바타 설정창 */
+      #avatar {
+        position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+        background: rgba(0, 0, 0, 0.7); margin: 0; padding: 16px; z-index: 10;
+      }
+      #avatar[hidden] { display: none; }
+      #avatar .box {
+        display: flex; gap: 24px; align-items: center; flex-wrap: wrap; justify-content: center;
+        max-width: 560px; padding: 24px; background: #2a1a0e; border: 2px solid #6e4a2d;
+      }
+      #avatar h2 { margin: 0 0 14px; font-size: 20px; }
+      #avatar-preview {
+        width: 96px; height: 144px; padding: 16px 24px; image-rendering: pixelated;
+        background: #8b5a2b; border: 3px solid #5c3b23; border-radius: 8px;
+      }
+      #avatar .fields { display: flex; flex-direction: column; gap: 14px; min-width: 260px; }
+      #avatar label { display: block; margin-bottom: 6px; font-size: 13px; color: #c9b48f; }
+      #avatar-gender { display: flex; gap: 8px; }
+      #avatar-gender button {
+        flex: 1; padding: 6px; cursor: pointer; border: 1px solid #6e4a2d; border-radius: 6px;
+        background: #3a2717; color: #f3e3c3; font: 14px sans-serif;
+      }
+      #avatar-gender button.on { background: #d4ad3a; color: #2a1a0e; border-color: #d4ad3a; font-weight: bold; }
+      #avatar .name-row { display: flex; gap: 6px; }
+      #avatar-name {
+        flex: 1; min-width: 0; padding: 6px 8px; border: 1px solid #6e4a2d; border-radius: 6px;
+        background: #1e140b; color: #f3e3c3; font-size: 14px;
+      }
+      #avatar-random { cursor: pointer; padding: 0 10px; border: 1px solid #6e4a2d; border-radius: 6px; background: #3a2717; font-size: 16px; }
+      #avatar-colors { display: grid; grid-template-columns: repeat(6, 30px); gap: 8px; }
+      #avatar-colors button { width: 30px; height: 30px; cursor: pointer; border: 2px solid #1e140b; border-radius: 50%; }
+      #avatar-colors button.on { outline: 3px solid #fff; outline-offset: 1px; }
+      #avatar-error { min-height: 1em; color: #ff9b8a; font-size: 13px; }
+      #avatar .actions { display: flex; gap: 8px; justify-content: flex-end; }
+      #avatar .actions button { cursor: pointer; padding: 7px 16px; border: 0; border-radius: 6px; font: bold 14px sans-serif; }
+      #avatar-submit { background: #d4ad3a; color: #2a1a0e; }
+      #avatar-cancel { background: #4a3322; color: #f3e3c3; }
+      #avatar-cancel[hidden] { display: none; }
       #reactions { position: fixed; right: 16px; top: 16px; padding: 8px 12px; font-size: 13px; }
 
       #chat { position: fixed; left: 16px; bottom: 16px; width: 280px; padding: 8px; }
@@ -70,7 +114,10 @@
   <body>
     <div id="game"></div>
     <div id="tags"></div>
-    <div id="status" class="panel"></div>
+    <div id="status-bar" class="panel">
+      <span id="status"></span>
+      <button id="avatar-btn" hidden>아바타 변경</button>
+    </div>
     <div id="reactions" class="panel"></div>
     <div id="chat" class="panel">
       <div id="chat-log"></div>
@@ -86,6 +133,37 @@
         <button id="notice-btn"></button>
       </div>
     </div>
+    <form id="avatar" hidden>
+      <div class="box panel">
+        <canvas id="avatar-preview" width="96" height="144"></canvas>
+        <div class="fields">
+          <h2 id="avatar-title">아바타 만들기</h2>
+          <div>
+            <label>성별</label>
+            <div id="avatar-gender">
+              <button type="button" data-gender="male">남</button>
+              <button type="button" data-gender="female">여</button>
+            </div>
+          </div>
+          <div>
+            <label for="avatar-name">이름</label>
+            <div class="name-row">
+              <input id="avatar-name" autocomplete="off" />
+              <button type="button" id="avatar-random" title="랜덤 이름">🎲</button>
+            </div>
+          </div>
+          <div>
+            <label>옷 색</label>
+            <div id="avatar-colors"></div>
+          </div>
+          <div id="avatar-error"></div>
+          <div class="actions">
+            <button type="button" id="avatar-cancel">취소</button>
+            <button type="submit" id="avatar-submit">입장하기</button>
+          </div>
+        </div>
+      </div>
+    </form>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
