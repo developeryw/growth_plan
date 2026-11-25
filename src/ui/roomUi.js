@@ -1,5 +1,6 @@
 // 단체 게임방 화면 UI: 위쪽 방 정보 줄, 키오스크 메뉴판(투표), 게임·초대 공유 칸, 팀원 알림창, 방장 위임 창
 import { openGameTab, safeUrl } from './gameMenu.js';
+import { icon, iconHtml } from './icons.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -46,9 +47,11 @@ export function hideRoomUi() {
 }
 
 export function renderRoomBar({ n, hostName, count, max, locked, isHost }) {
-  $('room-info').textContent = `방 ${n} · 👑 ${hostName || '…'} · ${count}/${max}명${locked ? ' · 🔒 잠김' : ''}`;
+  const info = [`방 ${n} · `, icon('crown'), ` ${hostName || '…'} · ${count}/${max}명`];
+  if (locked) info.push(' · ', icon('lock'), ' 잠김');
+  $('room-info').replaceChildren(...info);
   $('lock-btn').hidden = !isHost;
-  $('lock-btn').textContent = locked ? '🔓 방문 열기' : '🔒 방문 잠그기';
+  $('lock-btn').innerHTML = locked ? `${iconHtml('unlock')} 방문 열기` : `${iconHtml('lock')} 방문 잠그기`;
   $('disband-btn').hidden = !isHost;
 }
 
@@ -125,14 +128,17 @@ export function renderGamePanel(view, h) {
   }
   const { game, url, invite, isHost, autoOpen } = view;
   const body = [];
-  body.push(el('div', { class: 'gp-title', text: `🎲 지금 게임: ${game.name}` }));
-  const openBtn = (label, target) =>
-    el('button', {
-      type: 'button',
-      class: 'gp-open',
-      text: label,
-      on: { click: () => openGameTab(target) || alert('팝업이 차단됐어요. 브라우저 주소창 옆의 팝업 허용을 눌러 주세요.') },
-    });
+  body.push(el('div', { class: 'gp-title' }, [icon('dice'), ` 지금 게임: ${game.name}`]));
+  const openBtn = (label, target, iconName = 'dice') =>
+    el(
+      'button',
+      {
+        type: 'button',
+        class: 'gp-open',
+        on: { click: () => openGameTab(target) || alert('팝업이 차단됐어요. 브라우저 주소창 옆의 팝업 허용을 눌러 주세요.') },
+      },
+      [icon(iconName), ` ${label}`],
+    );
 
   if (game.join === 'url-template') {
     body.push(el('p', { text: '모두 같은 게임방 주소로 들어가요.' }), openBtn('게임 열기', url));
@@ -142,7 +148,7 @@ export function renderGamePanel(view, h) {
     if (isHost) {
       if (game.join === 'qr') {
         body.push(el('p', { text: '게임의 QR을 캡처(⌘+Shift+4 / Win+Shift+S)한 뒤, 여기를 누르고 붙여넣기(Ctrl/⌘+V) 하세요.' }));
-        body.push(el('div', { class: 'gp-paste', tabIndex: 0, text: '📋 여기에 QR 붙여넣기', on: { paste: (e) => pasteQr(e, h) } }));
+        body.push(el('div', { class: 'gp-paste', tabIndex: 0, on: { paste: (e) => pasteQr(e, h) } }, [icon('clipboard'), ' 여기에 QR 붙여넣기']));
       } else {
         const input = el('input', { placeholder: isCode ? '참가 코드 입력' : '초대 링크 붙여넣기', value: invite?.value || '', maxLength: 300 });
         input.addEventListener('keydown', (e) => e.stopPropagation());
@@ -156,7 +162,7 @@ export function renderGamePanel(view, h) {
       }
     }
     if (invite?.type === 'link' && safeUrl(invite.value)) {
-      body.push(openBtn('👉 참가하기', invite.value));
+      body.push(openBtn('참가하기', invite.value, 'pointer'));
     } else if (invite?.type === 'code') {
       body.push(
         el('div', { class: 'gp-code', text: invite.value }),
@@ -232,7 +238,7 @@ export function chooseDelegate(members) {
     const cancel = () => finish(null);
     m.addEventListener('close', cancel);
     for (const { uid, name } of members) {
-      list.append(el('button', { type: 'button', text: `👑 ${name}`, on: { click: () => finish(uid) } }));
+      list.append(el('button', { type: 'button', on: { click: () => finish(uid) } }, [icon('crown'), ` ${name}`]));
     }
     $('delegate-cancel').onclick = cancel;
     m.hidden = false;

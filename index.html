@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>온라인 보드게임 카페</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎲</text></svg>" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <style>
-      html, body { margin: 0; height: 100%; background: #1e1a16; overflow: hidden; font-family: sans-serif; }
+      html, body { margin: 0; height: 100%; background: #1e1a16; overflow: hidden; font-family: Galmuri11, sans-serif; }
       #game { width: 100%; height: 100%; }
-      .panel { background: rgba(30, 20, 12, 0.85); color: #f3e3c3; border-radius: 10px; font-size: 14px; line-height: 1.4; }
+      .panel { background: rgba(30, 20, 12, 0.85); color: #f3e3c3; border-radius: 10px; font-size: 12px; font-family: Galmuri11, sans-serif; line-height: 1.4; }
 
       /* 머리 위 이름표·말풍선·리액션 */
       #tags { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
@@ -20,27 +20,26 @@
       .tag > * { flex: none; white-space: nowrap; }
       .tag .name {
         margin-bottom: 2px; padding: 1px 6px; border-radius: 6px;
-        background: rgba(0, 0, 0, 0.55); color: #fff; font-size: 12px;
+        background: rgba(0, 0, 0, 0.55); color: #fff; font-size: 12px; font-family: Galmuri11, sans-serif;
       }
       .tag.me .name { background: rgba(212, 173, 58, 0.9); color: #2a1a0e; }
-      .tag.host .name::before { content: '👑 '; }
       .door-label {
         position: absolute; left: 0; top: 0; transform-origin: 0 0; white-space: nowrap;
         margin: -22px 0 0 0; translate: -50% 0; padding: 1px 6px; border-radius: 6px;
-        background: rgba(122, 31, 43, 0.92); color: #ffe9b0; font-size: 12px; border: 1px solid #d4ad3a;
+        background: rgba(122, 31, 43, 0.92); color: #ffe9b0; font-size: 12px; font-family: Galmuri11, sans-serif; border: 1px solid #d4ad3a;
       }
       .door-label.full { background: rgba(60, 60, 60, 0.92); color: #ddd; border-color: #888; }
       .tag .bubble {
         width: max-content; max-width: 220px; white-space: normal; word-break: keep-all; overflow-wrap: anywhere;
         margin-bottom: 4px; padding: 5px 9px; border-radius: 10px;
-        background: #fffdf5; color: #2a1a0e; font-size: 13px; text-align: center;
+        background: #fffdf5; color: #2a1a0e; font-size: 12px; font-family: Galmuri11, sans-serif; text-align: center;
         box-shadow: 0 1px 0 rgba(0,0,0,.3);
       }
       .tag .playing {
         margin-bottom: 3px; padding: 2px 8px; border-radius: 8px;
-        background: #2f5d50; color: #f3e3c3; font-size: 12px; border: 1px solid #4a8a77;
+        background: #2f5d50; color: #f3e3c3; font-size: 12px; font-family: Galmuri11, sans-serif; border: 1px solid #4a8a77;
       }
-      .tag .reaction { font-size: 22px; margin-bottom: 2px; animation: pop .25s ease-out; }
+      .tag .reaction { font-size: 24px; font-family: Galmuri11, sans-serif; margin-bottom: 2px; animation: pop .25s ease-out; }
       .tag [hidden] { display: none; }
       @keyframes pop { from { transform: scale(.3); } to { transform: scale(1); } }
 
@@ -51,10 +50,10 @@
       }
       #stand-btn, #notice-btn {
         pointer-events: auto; cursor: pointer; padding: 4px 12px; border: 0; border-radius: 6px;
-        background: #d4ad3a; color: #2a1a0e; font: bold 14px sans-serif;
+        background: #d4ad3a; color: #2a1a0e; font: bold 12px Galmuri11, sans-serif;
       }
       #menu-btn { pointer-events: auto; cursor: pointer; padding: 4px 12px; border: 1px solid #d4ad3a; border-radius: 6px;
-        background: transparent; color: #d4ad3a; font: bold 14px sans-serif; }
+        background: transparent; color: #d4ad3a; font: bold 12px Galmuri11, sans-serif; }
       #stand-btn[hidden], #menu-btn[hidden], #notice[hidden], #games[hidden],
       #room-bar[hidden], #kiosk[hidden], #game-panel[hidden], #game-modal[hidden], #delegate[hidden], #toast[hidden],
       #room-bar button[hidden] { display: none; }
@@ -62,7 +61,7 @@
       /* 알림 토스트 */
       #toast {
         position: fixed; left: 50%; top: 70px; transform: translateX(-50%); z-index: 20;
-        padding: 10px 16px; border-radius: 10px; background: #fffdf5; color: #2a1a0e; font-size: 14px;
+        padding: 10px 16px; border-radius: 10px; background: #fffdf5; color: #2a1a0e; font-size: 12px; font-family: Galmuri11, sans-serif;
         box-shadow: 0 4px 16px rgba(0,0,0,.4);
       }
 
@@ -74,7 +73,7 @@
       #room-info { margin-right: 4px; }
       #room-bar button, .gp-btn {
         cursor: pointer; padding: 4px 10px; border: 1px solid #d4ad3a; border-radius: 6px;
-        background: transparent; color: #d4ad3a; font: bold 13px sans-serif;
+        background: transparent; color: #d4ad3a; font: bold 12px Galmuri11, sans-serif;
       }
       #room-bar #leave-btn { background: #d4ad3a; color: #2a1a0e; }
 
@@ -84,11 +83,11 @@
         background: rgba(0, 0, 0, 0.6); padding: 16px; z-index: 10; outline: none;
       }
       .modal .panel { width: 100%; max-width: 480px; padding: 20px; background: #2a1a0e; border: 2px solid #6e4a2d; }
-      .modal h2 { margin: 0 0 4px; font-size: 19px; }
-      .modal p { margin: 0 0 14px; font-size: 13px; color: #c9b48f; }
+      .modal h2 { margin: 0 0 4px; font-size: 15px; font-family: Galmuri14, sans-serif; font-weight: 400; }
+      .modal p { margin: 0 0 14px; font-size: 12px; font-family: Galmuri11, sans-serif; color: #c9b48f; }
       .modal .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
       .modal .actions button, #delegate-list button {
-        cursor: pointer; padding: 7px 16px; border: 0; border-radius: 6px; background: #4a3322; color: #f3e3c3; font: bold 14px sans-serif;
+        cursor: pointer; padding: 7px 16px; border: 0; border-radius: 6px; background: #4a3322; color: #f3e3c3; font: bold 12px Galmuri11, sans-serif;
       }
       .modal .actions .primary { background: #d4ad3a; color: #2a1a0e; }
 
@@ -101,10 +100,10 @@
       .kiosk-game.voted { border-color: #d4ad3a; }
       .kiosk-game.playing { box-shadow: inset 0 0 0 2px #4a8a77; }
       .kiosk-name { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-      .kiosk-name b { font-size: 15px; }
+      .kiosk-name b { font-size: 15px; font-family: Galmuri14, sans-serif; font-weight: 400; }
       .kiosk-name small { color: #d4ad3a; }
-      .kiosk-name .voters { font-size: 12px; color: #a8936f; white-space: normal; }
-      .kiosk-game button { cursor: pointer; padding: 6px 10px; border-radius: 6px; font: bold 13px sans-serif; }
+      .kiosk-name .voters { font-size: 12px; font-family: Galmuri11, sans-serif; color: #a8936f; white-space: normal; }
+      .kiosk-game button { cursor: pointer; padding: 6px 10px; border-radius: 6px; font: bold 12px Galmuri11, sans-serif; }
       .vote-btn { border: 1px solid #d4ad3a; background: transparent; color: #d4ad3a; }
       .play-btn { border: 0; background: #4a8a77; color: #fff; }
       #kiosk-list .empty { margin: 0; }
@@ -114,28 +113,28 @@
         position: fixed; right: 16px; bottom: 16px; width: 260px; padding: 12px;
         display: flex; flex-direction: column; gap: 8px; z-index: 5;
       }
-      #game-panel .gp-title { font-weight: bold; font-size: 15px; }
-      #game-panel p { margin: 0; font-size: 12px; color: #c9b48f; }
+      #game-panel .gp-title { font-weight: bold; font-size: 15px; font-family: Galmuri14, sans-serif; font-weight: 400; }
+      #game-panel p { margin: 0; font-size: 12px; font-family: Galmuri11, sans-serif; color: #c9b48f; }
       #game-panel .muted { color: #a8936f; }
       #game-panel button {
         cursor: pointer; padding: 6px 10px; border: 1px solid #d4ad3a; border-radius: 6px;
-        background: transparent; color: #d4ad3a; font: bold 13px sans-serif;
+        background: transparent; color: #d4ad3a; font: bold 12px Galmuri11, sans-serif;
       }
       #game-panel .gp-open { background: #d4ad3a; color: #2a1a0e; }
       #game-panel .gp-end { border-color: #6e4a2d; color: #c9b48f; font-weight: normal; }
       #game-panel .gp-row { display: flex; gap: 6px; }
       #game-panel input:not([type=checkbox]) {
         flex: 1; min-width: 0; padding: 6px 8px; border: 1px solid #6e4a2d; border-radius: 6px;
-        background: #1e140b; color: #f3e3c3; font-size: 13px;
+        background: #1e140b; color: #f3e3c3; font-size: 12px; font-family: Galmuri11, sans-serif;
       }
       #game-panel .gp-code {
         padding: 8px; border-radius: 8px; background: #fffdf5; color: #2a1a0e;
-        font: bold 26px monospace; text-align: center; letter-spacing: 2px; word-break: break-all;
+        font: bold 24px Galmuri11, sans-serif; text-align: center; letter-spacing: 2px; word-break: break-all;
       }
-      #game-panel .gp-paste { padding: 14px; border: 2px dashed #6e4a2d; border-radius: 8px; text-align: center; font-size: 13px; outline: none; }
+      #game-panel .gp-paste { padding: 14px; border: 2px dashed #6e4a2d; border-radius: 8px; text-align: center; font-size: 12px; font-family: Galmuri11, sans-serif; outline: none; }
       #game-panel .gp-paste:focus { border-color: #d4ad3a; }
-      #game-panel .gp-auto { font-size: 12px; color: #c9b48f; display: flex; gap: 6px; align-items: center; }
-      #game-modal-text { font-size: 17px; margin-bottom: 4px; }
+      #game-panel .gp-auto { font-size: 12px; font-family: Galmuri11, sans-serif; color: #c9b48f; display: flex; gap: 6px; align-items: center; }
+      #game-modal-text { font-size: 15px; font-family: Galmuri14, sans-serif; font-weight: 400; margin-bottom: 4px; }
       #delegate-list { display: flex; flex-direction: column; gap: 8px; }
       #delegate-list button { text-align: left; background: #3a2717; border: 1px solid #6e4a2d; }
       #delegate-list button:hover { border-color: #d4ad3a; }
@@ -144,19 +143,19 @@
       #board .panel { max-width: 860px; max-height: calc(100vh - 32px); display: flex; flex-direction: column; }
       .board-head { display: flex; align-items: center; gap: 10px; }
       .board-head h2 { margin: 0; flex: 1; }
-      .board-head button { cursor: pointer; padding: 6px 12px; border: 0; border-radius: 6px; font: bold 14px sans-serif; background: #4a3322; color: #f3e3c3; }
+      .board-head button { cursor: pointer; padding: 6px 12px; border: 0; border-radius: 6px; font: bold 12px Galmuri11, sans-serif; background: #4a3322; color: #f3e3c3; }
       .board-head #board-new { background: #d4ad3a; color: #2a1a0e; }
-      #board-count { font-size: 13px; color: #c9b48f; font-weight: normal; margin-left: 6px; }
+      #board-count { font-size: 12px; font-family: Galmuri11, sans-serif; color: #c9b48f; font-weight: normal; margin-left: 6px; }
       #board-list {
         display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 22px 16px;
         padding: 24px 16px 16px; margin-top: 10px; overflow-y: auto; min-height: 220px;
         background: #c49a6c radial-gradient(#b08458 1px, transparent 1px) 0 0 / 7px 7px;
         border: 6px solid #6e4522; border-radius: 6px;
       }
-      .board-empty { grid-column: 1 / -1; text-align: center; color: #4a2e16 !important; font-size: 14px !important; margin: 60px 0 !important; }
+      .board-empty { grid-column: 1 / -1; text-align: center; color: #4a2e16 !important; font-size: 12px !important; font-family: Galmuri11, sans-serif !important; margin: 60px 0 !important; }
       .paper { position: relative; padding: 12px 8px 8px; background: #fffdf5; box-shadow: 0 3px 6px rgba(0,0,0,.35); color: #2a1a0e; }
       .paper img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; cursor: zoom-in; background: #eee; }
-      .paper-meta { display: flex; justify-content: space-between; gap: 6px; margin-top: 6px; font-size: 12px; }
+      .paper-meta { display: flex; justify-content: space-between; gap: 6px; margin-top: 6px; font-size: 12px; font-family: Galmuri11, sans-serif; }
       .paper-meta b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .paper-meta span { color: #7a6a48; flex: none; }
       .pin {
@@ -166,10 +165,10 @@
       }
       .pin:hover { scale: 1.2; }
       #board-form { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; overflow-y: auto; }
-      #board-form label { display: block; margin-bottom: 4px; font-size: 13px; color: #c9b48f; }
+      #board-form label { display: block; margin-bottom: 4px; font-size: 12px; font-family: Galmuri11, sans-serif; color: #c9b48f; }
       #board-drop {
         display: flex; align-items: center; justify-content: center; min-height: 160px; cursor: pointer;
-        border: 2px dashed #6e4a2d; border-radius: 8px; padding: 10px; text-align: center; color: #c9b48f; font-size: 14px;
+        border: 2px dashed #6e4a2d; border-radius: 8px; padding: 10px; text-align: center; color: #c9b48f; font-size: 12px; font-family: Galmuri11, sans-serif;
       }
       #board-drop:hover { border-color: #d4ad3a; }
       #board-preview { max-width: 100%; max-height: 260px; }
@@ -178,23 +177,23 @@
       #board-name { display: block; padding: 6px 0; font-weight: bold; }
       #board-form input[type=date], #board-pw {
         width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #6e4a2d; border-radius: 6px;
-        background: #1e140b; color: #f3e3c3; font-size: 14px; color-scheme: dark;
+        background: #1e140b; color: #f3e3c3; font-size: 12px; font-family: Galmuri11, sans-serif; color-scheme: dark;
       }
-      #board-msg { min-height: 1em; font-size: 13px; color: #c9b48f; }
+      #board-msg { min-height: 1em; font-size: 12px; font-family: Galmuri11, sans-serif; color: #c9b48f; }
       #board-msg.error { color: #ff9b8a; }
       #board-view { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.85); cursor: zoom-out; }
       #board-view img { max-width: 92vw; max-height: 92vh; }
       .board-label {
         position: absolute; left: 0; top: 0; white-space: nowrap; translate: -50% 0; margin-top: -24px;
-        padding: 2px 10px; border-radius: 6px; background: #6e4522; color: #ffe9b0; font-size: 13px; font-weight: bold; border: 1px solid #d4ad3a;
+        padding: 2px 10px; border-radius: 6px; background: #6e4522; color: #ffe9b0; font-size: 12px; font-family: Galmuri11, sans-serif; font-weight: bold; border: 1px solid #d4ad3a;
       }
 
       #feedback[hidden] { display: none; }
       #feedback-text {
         width: 100%; box-sizing: border-box; padding: 8px; resize: vertical; border: 1px solid #6e4a2d; border-radius: 6px;
-        background: #1e140b; color: #f3e3c3; font: 14px/1.5 sans-serif;
+        background: #1e140b; color: #f3e3c3; font: 12px/1.5 Galmuri11, sans-serif;
       }
-      .feedback-foot { display: flex; justify-content: space-between; font-size: 12px; color: #c9b48f; margin-top: 4px; }
+      .feedback-foot { display: flex; justify-content: space-between; font-size: 12px; font-family: Galmuri11, sans-serif; color: #c9b48f; margin-top: 4px; }
       #feedback-msg { color: #ff9b8a; }
 
       @media (max-width: 760px) { #room-bar { top: 60px; flex-wrap: wrap; justify-content: center; white-space: normal; } #game-panel { bottom: 200px; } }
@@ -205,25 +204,25 @@
         background: rgba(0, 0, 0, 0.6); padding: 16px; z-index: 10; outline: none;
       }
       #games .panel { width: 100%; max-width: 460px; padding: 20px; background: #2a1a0e; border: 2px solid #6e4a2d; }
-      #games h2 { margin: 0 0 4px; font-size: 19px; }
-      #games p { margin: 0 0 14px; font-size: 13px; color: #c9b48f; }
+      #games h2 { margin: 0 0 4px; font-size: 15px; font-family: Galmuri14, sans-serif; font-weight: 400; }
+      #games p { margin: 0 0 14px; font-size: 12px; font-family: Galmuri11, sans-serif; color: #c9b48f; }
       #games-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-height: 60vh; overflow-y: auto; }
       #games-list .game {
         display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left;
         padding: 10px 12px; cursor: pointer; border: 1px solid #6e4a2d; border-radius: 8px;
-        background: #3a2717; color: #f3e3c3; font: 15px sans-serif;
+        background: #3a2717; color: #f3e3c3; font: 15px Galmuri14, sans-serif;
       }
       #games-list .game:hover { background: #4a3322; border-color: #d4ad3a; }
       #games-list .game.on { border-color: #d4ad3a; box-shadow: inset 0 0 0 1px #d4ad3a; }
-      #games-list small { color: #a8936f; font-size: 11px; }
+      #games-list small { color: #a8936f; font-size: 12px; font-family: Galmuri11, sans-serif; }
       #games .actions { display: flex; justify-content: flex-end; margin-top: 14px; }
-      #games-close { cursor: pointer; padding: 7px 16px; border: 0; border-radius: 6px; background: #4a3322; color: #f3e3c3; font: bold 14px sans-serif; }
+      #games-close { cursor: pointer; padding: 7px 16px; border: 0; border-radius: 6px; background: #4a3322; color: #f3e3c3; font: bold 12px Galmuri11, sans-serif; }
       @media (max-width: 420px) { #games-list { grid-template-columns: 1fr; } }
 
       #status-bar { position: fixed; left: 16px; top: 16px; padding: 6px 8px 6px 12px; display: flex; gap: 10px; align-items: center; }
       #avatar-btn {
         cursor: pointer; padding: 3px 10px; border: 1px solid #d4ad3a; border-radius: 6px;
-        background: transparent; color: #d4ad3a; font: 13px sans-serif;
+        background: transparent; color: #d4ad3a; font: 12px Galmuri11, sans-serif;
       }
       #avatar-btn[hidden] { display: none; }
 
@@ -237,50 +236,50 @@
         display: flex; gap: 24px; align-items: center; flex-wrap: wrap; justify-content: center;
         max-width: 560px; padding: 24px; background: #2a1a0e; border: 2px solid #6e4a2d;
       }
-      #avatar h2 { margin: 0 0 14px; font-size: 20px; }
+      #avatar h2 { margin: 0 0 14px; font-size: 24px; font-family: Galmuri11, sans-serif; }
       #avatar-preview {
         width: 96px; height: 144px; padding: 16px 24px; image-rendering: pixelated;
         background: #8b5a2b; border: 3px solid #5c3b23; border-radius: 8px;
       }
       #avatar .fields { display: flex; flex-direction: column; gap: 14px; min-width: 260px; }
-      #avatar label { display: block; margin-bottom: 6px; font-size: 13px; color: #c9b48f; }
+      #avatar label { display: block; margin-bottom: 6px; font-size: 12px; font-family: Galmuri11, sans-serif; color: #c9b48f; }
       #avatar-gender { display: flex; gap: 8px; }
       #avatar-gender button {
         flex: 1; padding: 6px; cursor: pointer; border: 1px solid #6e4a2d; border-radius: 6px;
-        background: #3a2717; color: #f3e3c3; font: 14px sans-serif;
+        background: #3a2717; color: #f3e3c3; font: 12px Galmuri11, sans-serif;
       }
       #avatar-gender button.on { background: #d4ad3a; color: #2a1a0e; border-color: #d4ad3a; font-weight: bold; }
       #avatar .name-row { display: flex; gap: 6px; }
       #avatar-name {
         flex: 1; min-width: 0; padding: 6px 8px; border: 1px solid #6e4a2d; border-radius: 6px;
-        background: #1e140b; color: #f3e3c3; font-size: 14px;
+        background: #1e140b; color: #f3e3c3; font-size: 12px; font-family: Galmuri11, sans-serif;
       }
-      #avatar-random { cursor: pointer; padding: 0 10px; border: 1px solid #6e4a2d; border-radius: 6px; background: #3a2717; font-size: 16px; }
+      #avatar-random { cursor: pointer; padding: 0 10px; border: 1px solid #6e4a2d; border-radius: 6px; background: #3a2717; font-size: 15px; font-family: Galmuri14, sans-serif; font-weight: 400; }
       #avatar-colors { display: grid; grid-template-columns: repeat(6, 30px); gap: 8px; }
       #avatar-colors button { width: 30px; height: 30px; cursor: pointer; border: 2px solid #1e140b; border-radius: 50%; }
       #avatar-colors button.on { outline: 3px solid #fff; outline-offset: 1px; }
-      #avatar-error { min-height: 1em; color: #ff9b8a; font-size: 13px; }
+      #avatar-error { min-height: 1em; color: #ff9b8a; font-size: 12px; font-family: Galmuri11, sans-serif; }
       #avatar .actions { display: flex; gap: 8px; justify-content: flex-end; }
-      #avatar .actions button { cursor: pointer; padding: 7px 16px; border: 0; border-radius: 6px; font: bold 14px sans-serif; }
+      #avatar .actions button { cursor: pointer; padding: 7px 16px; border: 0; border-radius: 6px; font: bold 12px Galmuri11, sans-serif; }
       #avatar-submit { background: #d4ad3a; color: #2a1a0e; }
       #avatar-cancel { background: #4a3322; color: #f3e3c3; }
       #avatar-cancel[hidden] { display: none; }
-      #reactions { position: fixed; right: 16px; top: 16px; padding: 8px 12px; font-size: 13px; }
+      #reactions { position: fixed; right: 16px; top: 16px; padding: 8px 12px; font-size: 12px; font-family: Galmuri11, sans-serif; }
 
       #chat { position: fixed; left: 16px; bottom: 16px; width: 280px; padding: 8px; }
-      #chat-log { max-height: 160px; overflow-y: auto; margin-bottom: 6px; font-size: 13px; }
+      #chat-log { max-height: 160px; overflow-y: auto; margin-bottom: 6px; font-size: 12px; font-family: Galmuri11, sans-serif; }
       #chat-log .mine b { color: #d4ad3a; }
       #chat-log b { color: #9fd0ff; }
       #chat-input {
         width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #6e4a2d; border-radius: 6px;
-        background: #2a1a0e; color: #f3e3c3; font-size: 14px;
+        background: #2a1a0e; color: #f3e3c3; font-size: 12px; font-family: Galmuri11, sans-serif;
       }
 
       #notice {
         position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
         background: rgba(0, 0, 0, 0.7);
       }
-      #notice .panel { padding: 24px 28px; text-align: center; font-size: 16px; background: #2a1a0e; }
+      #notice .panel { padding: 24px 28px; text-align: center; font-size: 15px; font-family: Galmuri14, sans-serif; font-weight: 400; background: #2a1a0e; }
       #notice-text { white-space: pre-line; margin-bottom: 16px; }
 
       /* 좁은 화면에서는 리액션 안내를 숨긴다 */
@@ -313,15 +312,15 @@
     <div id="toast" hidden></div>
     <div id="room-bar" class="panel" hidden>
       <span id="room-info"></span>
-      <button id="kiosk-btn">🗳 메뉴판</button>
-      <button id="lock-btn" hidden>🔒 방문 잠그기</button>
+      <button id="kiosk-btn"><i class="ico ico-kiosk" aria-hidden="true"></i> 메뉴판</button>
+      <button id="lock-btn" hidden><i class="ico ico-lock" aria-hidden="true"></i> 방문 잠그기</button>
       <button id="disband-btn" hidden>해산</button>
       <button id="leave-btn">나가기</button>
     </div>
     <div id="game-panel" class="panel" hidden></div>
     <div id="kiosk" class="modal" tabindex="-1" hidden>
       <div class="panel">
-        <h2>🗳 단체 게임 메뉴판</h2>
+        <h2><i class="ico ico-kiosk" aria-hidden="true"></i> 단체 게임 메뉴판</h2>
         <p id="kiosk-desc"></p>
         <div id="kiosk-list"></div>
         <div class="actions"><button type="button" id="kiosk-close">닫기</button></div>
@@ -333,13 +332,13 @@
         <p>버튼을 누르면 새 탭에서 게임이 열려요.</p>
         <div class="actions">
           <button type="button" id="game-modal-close">나중에</button>
-          <button type="button" id="game-modal-open" class="primary">🎲 게임 열기</button>
+          <button type="button" id="game-modal-open" class="primary"><i class="ico ico-dice" aria-hidden="true"></i> 게임 열기</button>
         </div>
       </div>
     </div>
     <div id="delegate" class="modal" tabindex="-1" hidden>
       <div class="panel">
-        <h2>👑 다음 방장 고르기</h2>
+        <h2><i class="ico ico-crown" aria-hidden="true"></i> 다음 방장 고르기</h2>
         <p>방장이 나가려면 다음 방장을 정해야 해요.</p>
         <div id="delegate-list"></div>
         <div class="actions"><button type="button" id="delegate-cancel">취소 (방에 남기)</button></div>
@@ -348,7 +347,7 @@
     <div id="board" class="modal" tabindex="-1" hidden>
       <div class="panel">
         <div class="board-head">
-          <h2>📌 게시판<span id="board-count"></span></h2>
+          <h2><i class="ico ico-pin" aria-hidden="true"></i> 게시판<span id="board-count"></span></h2>
           <button type="button" id="board-new">＋ 올리기</button>
           <button type="button" id="board-close">닫기</button>
         </div>
@@ -357,7 +356,7 @@
           <div>
             <label>캡처 1장 (눌러서 고르기 · 끌어다 놓기 · Ctrl/⌘+V 붙여넣기)</label>
             <div id="board-drop">
-              <span id="board-drop-text">📷 여기를 눌러 이미지를 고르세요</span>
+              <span id="board-drop-text"><i class="ico ico-camera" aria-hidden="true"></i> 여기를 눌러 이미지를 고르세요</span>
               <img id="board-preview" alt="미리보기" hidden />
             </div>
             <input type="file" id="board-file" accept="image/*" hidden />
@@ -377,7 +376,7 @@
     </div>
     <div id="feedback" class="modal" tabindex="-1" hidden>
       <form id="feedback-form" class="panel">
-        <h2>📮 건의함</h2>
+        <h2><i class="ico ico-mailbox" aria-hidden="true"></i> 건의함</h2>
         <p>바라는 점, 불편한 점, 추가하고 싶은 게임을 적어 주세요. 관리자만 읽을 수 있어요.</p>
         <textarea id="feedback-text" rows="6" placeholder="예) 단체 게임에 ○○도 넣어 주세요!"></textarea>
         <div class="feedback-foot"><span id="feedback-msg"></span><span id="feedback-count"></span></div>
@@ -390,7 +389,7 @@
     <div id="board-view" hidden><img id="board-view-img" alt="크게 보기" /></div>
     <div id="games" tabindex="-1" hidden>
       <div class="panel">
-        <h2>🎲 혼자 할 게임 고르기</h2>
+        <h2><i class="ico ico-dice" aria-hidden="true"></i> 혼자 할 게임 고르기</h2>
         <p>고르면 새 탭에서 열리고, 머리 위에 "하는 중"이 표시돼요.</p>
         <div id="games-list"></div>
         <div class="actions"><button type="button" id="games-close">그냥 앉아 있기</button></div>
@@ -412,7 +411,7 @@
             <label for="avatar-name">이름</label>
             <div class="name-row">
               <input id="avatar-name" autocomplete="off" />
-              <button type="button" id="avatar-random" title="랜덤 이름">🎲</button>
+              <button type="button" id="avatar-random" title="랜덤 이름"><i class="ico ico-dice" aria-hidden="true"></i></button>
             </div>
           </div>
           <div>

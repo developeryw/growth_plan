@@ -1,0 +1,30 @@
+/* 자동 생성 파일 — scripts/make-art.js 가 만든다. 직접 고치지 말 것. */
+.ico { display: inline-block; flex: none; width: calc(16px * var(--s, 1)); height: calc(16px * var(--s, 1)); vertical-align: middle;
+  background: url('/assets/icons.png') no-repeat; background-size: calc(128px * var(--s, 1)) auto; image-rendering: pixelated; }
+.ico-fighting { background-position: calc(0px * var(--s, 1)) calc(0px * var(--s, 1)); }
+.ico-hand { background-position: calc(-16px * var(--s, 1)) calc(0px * var(--s, 1)); }
+.ico-win { background-position: calc(-32px * var(--s, 1)) calc(0px * var(--s, 1)); }
+.ico-lose { background-position: calc(-48px * var(--s, 1)) calc(0px * var(--s, 1)); }
+.ico-clap { background-position: calc(-64px * var(--s, 1)) calc(0px * var(--s, 1)); }
+.ico-think { background-position: calc(-80px * var(--s, 1)) calc(0px * var(--s, 1)); }
+.ico-heart { background-position: calc(-96px * var(--s, 1)) calc(0px * var(--s, 1)); }
+.ico-again { background-position: calc(-112px * var(--s, 1)) calc(0px * var(--s, 1)); }
+.ico-sleep { background-position: calc(0px * var(--s, 1)) calc(-16px * var(--s, 1)); }
+.ico-dice { background-position: calc(-16px * var(--s, 1)) calc(-16px * var(--s, 1)); }
+.ico-crown { background-position: calc(-32px * var(--s, 1)) calc(-16px * var(--s, 1)); }
+.ico-lock { background-position: calc(-48px * var(--s, 1)) calc(-16px * var(--s, 1)); }
+.ico-unlock { background-position: calc(-64px * var(--s, 1)) calc(-16px * var(--s, 1)); }
+.ico-pin { background-position: calc(-80px * var(--s, 1)) calc(-16px * var(--s, 1)); }
+.ico-mailbox { background-position: calc(-96px * var(--s, 1)) calc(-16px * var(--s, 1)); }
+.ico-kiosk { background-position: calc(-112px * var(--s, 1)) calc(-16px * var(--s, 1)); }
+.ico-camera { background-position: calc(0px * var(--s, 1)) calc(-32px * var(--s, 1)); }
+.ico-clipboard { background-position: calc(-16px * var(--s, 1)) calc(-32px * var(--s, 1)); }
+.ico-pointer { background-position: calc(-32px * var(--s, 1)) calc(-32px * var(--s, 1)); }
+.ico-people { background-position: calc(-48px * var(--s, 1)) calc(-32px * var(--s, 1)); }
+.ico-door { background-position: calc(-64px * var(--s, 1)) calc(-32px * var(--s, 1)); }
+.ico-pencil { background-position: calc(-80px * var(--s, 1)) calc(-32px * var(--s, 1)); }
+.ico-wrench { background-position: calc(-96px * var(--s, 1)) calc(-32px * var(--s, 1)); }
+.ico-dot { background-position: calc(-112px * var(--s, 1)) calc(-32px * var(--s, 1)); }
+/* 방장 이름 앞 왕관 */
+.tag.host .name::before { content: ''; display: inline-block; width: 16px; height: 16px; margin-right: 2px; vertical-align: -4px;
+  background: url('/assets/icons.png') no-repeat -32px -16px; background-size: 128px auto; image-rendering: pixelated; }

@@ -955,7 +955,309 @@ function writeMap(name, W, H, tileLayers, objects, tilesetImg) {
   console.log('저장:', path.relative(ROOT, file));
 }
 
+
+// ───────────── 도트 아이콘 (16×16) — 이모지 대신 쓴다 ─────────────
+// public/assets/icons.png 한 장에 모으고, src/ui/icons.css 에 위치를 적어 둔다.
+const IK = '#2b1d14'; // 외곽선
+const IC = {
+  k: IK, y: '#f7d04a', Y: '#d9a92c', s: '#f1c7a0', S: '#d9a57e', r: '#e04848', R: '#a82a2a', w: '#ffffff',
+  g: '#9aa0a8', G: '#555a66', b: '#4f9be8', B: '#2f5fa8', o: '#f08a3a', n: '#8b5a2b', N: '#5c3b23',
+  l: '#6fcf6a', L: '#2f8a4a', d: '#d4ad3a', D: '#a07a1a', c: '#8fe0ff', m: '#a86bd9', p: '#ff8ab0',
+};
+
+// 글자 지도로 그리기 ('.'은 투명)
+function fromMap(rows, ox = 0, oy = 0, im = new Img(T, T)) {
+  rows.forEach((row, y) => [...row].forEach((ch, x) => IC[ch] && im.px(ox + x, oy + y, IC[ch])));
+  return im;
+}
+
+// 불투명한 픽셀 둘레에 어두운 외곽선
+function outline(im) {
+  const marks = [];
+  for (let y = 0; y < im.h; y++)
+    for (let x = 0; x < im.w; x++)
+      if (!im.alpha(x, y) && (im.alpha(x - 1, y) || im.alpha(x + 1, y) || im.alpha(x, y - 1) || im.alpha(x, y + 1))) marks.push([x, y]);
+  for (const [x, y] of marks) im.px(x, y, IK);
+  return im;
+}
+
+function line(im, x0, y0, x1, y1, w, c) {
+  const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0));
+  for (let i = 0; i <= n; i++) {
+    const x = Math.round(x0 + ((x1 - x0) * i) / n);
+    const y = Math.round(y0 + ((y1 - y0) * i) / n);
+    im.rect(x - Math.floor(w / 2), y - Math.floor(w / 2), w, w, c);
+  }
+}
+
+const SMALL_HAND = ['.k.k.k.', 'ksksksk', 'ksksksk', 'ksksksk', 'ksssssk', 'kSsssSk', '.kSSSk.', '.kbbbk.', '.kkkkk.'];
+
+function face() {
+  const im = new Img(T, T);
+  im.ellipse(8, 8, 7, 7, IC.y);
+  im.ellipse(9.5, 9.5, 5, 5, IC.y);
+  for (let y = 0; y < T; y++) for (let x = 0; x < T; x++) if (im.alpha(x, y) && (x - 8) + (y - 8) > 6) im.px(x, y, IC.Y);
+  im.px(5, 4, IC.w);
+  im.px(4, 5, IC.w);
+  return im;
+}
+
+const ICONS = {
+  // ── 리액션 9종 ──
+  fighting: () => {
+    const im = fromMap(SMALL_HAND, 1, 6);
+    fromMap(SMALL_HAND, 8, 6, im);
+    for (const [x, y] of [[1, 1], [2, 2], [7, 0], [7, 2], [13, 2], [14, 1], [7, 1]]) im.px(x, y, IC.y);
+    return im;
+  },
+  hand: () =>
+    fromMap([
+      '................', '..kk.kk.kk.kk...', '.ksskssksskssk..', '.ksskssksskssk..', '.ksskssksskssk..', '.ksskssksskssk..',
+      '.ksssssssssssk..', 'kksssssssssssk..', 'ksksssssssssSk..', 'kssksssssssSk...', '.kssssssssSSk....', '..kSsssssSSk....',
+      '...kSSSSSSk.....', '...kbbbbbbk.....', '...kbbbbbbk.....', '...kkkkkkkk.....',
+    ]),
+  win: () => {
+    const im = new Img(T, T);
+    // 폭죽 고깔 (왼쪽 아래 꼭짓점 → 오른쪽 위로 벌어짐)
+    const A = [1, 14], B = [5, 5], C = [10, 10];
+    const side = (p, q, x, y) => (q[0] - p[0]) * (y - p[1]) - (q[1] - p[1]) * (x - p[0]);
+    for (let y = 0; y < T; y++)
+      for (let x = 0; x < T; x++) {
+        const [px, py] = [x + 0.5, y + 0.5];
+        const s1 = side(A, B, px, py), s2 = side(B, C, px, py), s3 = side(C, A, px, py);
+        if ((s1 >= 0 && s2 >= 0 && s3 >= 0) || (s1 <= 0 && s2 <= 0 && s3 <= 0)) im.px(x, y, (x - y + 32) % 4 < 2 ? IC.o : IC.y);
+      }
+    outline(im);
+    for (const [x, y, c] of [[11, 2, 'r'], [14, 4, 'b'], [9, 1, 'l'], [14, 9, 'm'], [12, 6, 'y'], [7, 2, 'p'], [15, 1, 'y'], [11, 4, 'c'], [13, 11, 'r']]) im.px(x, y, IC[c]);
+    return im;
+  },
+  lose: () => {
+    const im = outline(face());
+    im.rect(5, 7, 1, 2, IK);
+    im.rect(10, 7, 1, 2, IK);
+    im.px(4, 5, IK); im.px(5, 5, IK); im.px(10, 5, IK); im.px(11, 5, IK); // 처진 눈썹
+    im.px(3, 6, IK); im.px(12, 6, IK);
+    im.rect(6, 11, 4, 1, IK);
+    im.px(5, 12, IK); im.px(10, 12, IK);
+    im.rect(12, 8, 1, 2, IC.c); // 눈물
+    return im;
+  },
+  clap: () => {
+    const im = fromMap(SMALL_HAND, 1, 7);
+    fromMap(SMALL_HAND, 7, 7, im);
+    for (const [x, y] of [[7, 5], [6, 4], [8, 4], [3, 3], [2, 2], [11, 3], [12, 2]]) im.px(x, y, IC.y);
+    return im;
+  },
+  think: () => {
+    const im = outline(face());
+    im.px(5, 6, IK); im.px(10, 6, IK);
+    im.rect(9, 4, 3, 1, IK); // 올라간 눈썹
+    im.rect(7, 10, 3, 1, IK);
+    // 턱을 괸 손
+    fromMap(['.kk...', 'kssk..', 'ksskk.', 'kssssk', 'kSsssk', '.kkkk.'], 2, 10, im);
+    return im;
+  },
+  heart: () =>
+    fromMap([
+      '................', '................', '..kkkk....kkkk..', '.krrrrk..krrrrk.', 'krrwwrrkkrrrrrRk', 'krrwrrrrrrrrrrRk',
+      'krrrrrrrrrrrrrRk', 'krrrrrrrrrrrrrRk', '.krrrrrrrrrrrRk.', '..krrrrrrrrrRk..', '...krrrrrrrRk...', '....krrrrrRk....',
+      '.....krrrRk.....', '......krRk......', '.......kk.......', '................',
+    ]),
+  again: () => {
+    const im = fromMap([
+      '................', '.....kk.kk......', '....ksskssk.....', '....ksskssk.....', '....ksskssk.....', '....ksskssk.....',
+      '...ksssksssk....', '...ksssksssk....', '...kSsskssSk....', '...kSSskSSSk....', '....kbbkbbk.....', '....kbbkbbk.....',
+      '....kkkkkkk.....',
+    ]);
+    for (const [x, y] of [[2, 1], [1, 2], [2, 2], [3, 2], [2, 3], [13, 4], [12, 5], [13, 5], [14, 5], [13, 6]]) im.px(x, y, IC.y);
+    return im;
+  },
+  sleep: () => {
+    const im = new Img(T, T);
+    im.rect(7, 1, 7, 2, IC.b);
+    for (const [y, x] of [[3, 11], [4, 10], [5, 9]]) im.rect(x, y, 2, 1, IC.b);
+    im.rect(7, 6, 7, 2, IC.b);
+    im.rect(2, 9, 4, 1, IC.c);
+    im.px(4, 10, IC.c);
+    im.px(3, 11, IC.c);
+    im.rect(2, 12, 4, 1, IC.c);
+    return outline(im);
+  },
+
+  // ── 화면 아이콘 ──
+  dice: () => {
+    const im = new Img(T, T);
+    im.rect(2, 3, 12, 10, IC.w);
+    im.rect(3, 2, 10, 12, IC.w);
+    im.rect(12, 4, 1, 9, '#d8d8e0');
+    im.rect(4, 12, 9, 1, '#d8d8e0');
+    for (const [x, y] of [[4, 4], [10, 4], [4, 10], [10, 10]]) im.rect(x, y, 2, 2, IK);
+    im.rect(7, 7, 2, 2, IC.r);
+    return outline(im);
+  },
+  crown: () => {
+    const im = new Img(T, T);
+    for (let x = 2; x <= 13; x++) {
+      const dist = Math.min(Math.abs(x - 2), Math.abs(x - 7.5), Math.abs(x - 13));
+      const h = 2 + Math.round(5 * Math.max(0, 1 - dist / 2.75));
+      im.rect(x, 10 - h, 1, h, IC.d);
+    }
+    im.rect(2, 10, 12, 3, IC.d);
+    im.rect(2, 12, 12, 1, IC.D);
+    im.rect(7, 10, 2, 2, IC.r);
+    im.px(4, 11, IC.b);
+    im.px(11, 11, IC.b);
+    outline(im);
+    for (const x of [2, 7, 8, 13]) im.px(x, 3, IC.y);
+    return im;
+  },
+  lock: () => {
+    const im = new Img(T, T);
+    im.rect(4, 2, 1, 6, IC.g); im.rect(11, 2, 1, 6, IC.g); im.rect(5, 1, 6, 1, IC.g);
+    im.rect(3, 7, 10, 7, IC.d);
+    im.rect(3, 13, 10, 1, IC.D);
+    outline(im);
+    im.rect(7, 9, 2, 2, IK); im.px(7, 11, IK); im.px(8, 11, IK);
+    im.px(4, 8, IC.y);
+    return im;
+  },
+  unlock: () => {
+    const im = new Img(T, T);
+    im.rect(9, 1, 1, 5, IC.g); im.rect(14, 1, 1, 3, IC.g); im.rect(10, 0, 4, 1, IC.g);
+    im.rect(3, 7, 10, 7, IC.d);
+    im.rect(3, 13, 10, 1, IC.D);
+    outline(im);
+    im.rect(7, 9, 2, 2, IK); im.px(7, 11, IK); im.px(8, 11, IK);
+    return im;
+  },
+  pin: () => {
+    const im = new Img(T, T);
+    im.rect(7, 9, 2, 6, IC.g);
+    im.ellipse(8, 5, 4.5, 4.5, IC.r);
+    im.ellipse(9, 6, 3, 3, IC.R);
+    im.ellipse(7.5, 5, 2.5, 2.5, IC.r);
+    outline(im);
+    im.px(6, 3, IC.w); im.px(6, 4, IC.w);
+    return im;
+  },
+  mailbox: () => mailbox(),
+  kiosk: () => kiosk(),
+  camera: () => {
+    const im = new Img(T, T);
+    im.rect(3, 3, 4, 2, IC.G);
+    im.rect(1, 5, 14, 9, IC.G);
+    im.rect(1, 5, 14, 1, IC.g);
+    outline(im);
+    im.ellipse(8, 9.5, 3.5, 3.5, IK);
+    im.ellipse(8, 9.5, 2.5, 2.5, '#2f5f8a');
+    im.px(7, 8, IC.c);
+    im.rect(12, 7, 2, 1, IC.y);
+    return im;
+  },
+  clipboard: () => {
+    const im = new Img(T, T);
+    im.rect(3, 2, 10, 13, IC.n);
+    im.rect(4, 4, 8, 10, IC.w);
+    outline(im);
+    for (const y of [6, 8, 10]) im.rect(5, y, 6, 1, IC.g);
+    im.rect(6, 1, 4, 3, IC.g);
+    im.rect(7, 1, 2, 1, IK);
+    return im;
+  },
+  pointer: () => {
+    const im = new Img(T, T);
+    for (let y = 3; y <= 13; y++) {
+      const w = Math.round(9 * (1 - Math.abs(y - 8) / 5.5));
+      im.rect(4, y, w, 1, IC.y);
+    }
+    im.rect(4, 9, 6, 1, IC.Y);
+    return outline(im);
+  },
+  people: () => {
+    const im = new Img(T, T);
+    im.ellipse(11, 4.5, 2.5, 2.5, IC.s);
+    im.rect(8, 8, 7, 6, IC.m);
+    im.ellipse(5, 5.5, 2.5, 2.5, IC.s);
+    im.rect(2, 9, 7, 6, IC.b);
+    return outline(im);
+  },
+  door: () => {
+    const im = new Img(T, T);
+    im.rect(3, 1, 10, 14, IC.n);
+    im.rect(5, 3, 6, 4, IC.N);
+    im.rect(5, 9, 6, 4, IC.N);
+    outline(im);
+    im.rect(10, 8, 2, 1, IC.d);
+    return im;
+  },
+  pencil: () => {
+    const im = new Img(T, T);
+    line(im, 4, 11, 11, 4, 3, IC.y);
+    line(im, 11, 4, 13, 2, 3, IC.p);
+    line(im, 3, 12, 3, 12, 2, IC.s);
+    outline(im);
+    im.px(2, 13, IK);
+    return im;
+  },
+  wrench: () => {
+    const im = new Img(T, T);
+    line(im, 3, 12, 9, 6, 3, IC.g);
+    im.ellipse(11, 5, 3.5, 3.5, IC.g);
+    im.rect(11, 2, 2, 3, null);
+    for (const [x, y] of [[11, 2], [12, 2], [11, 3], [12, 3], [12, 4], [13, 3], [13, 2]]) im.d.set([0, 0, 0, 0], (y * T + x) * 4);
+    outline(im);
+    im.px(4, 11, IC.w);
+    return im;
+  },
+  dot: () => {
+    const im = new Img(T, T);
+    im.ellipse(8, 8, 4, 4, IC.l);
+    im.px(6, 6, '#c8f5c0');
+    return outline(im);
+  },
+};
+
+function buildIcons() {
+  const names = Object.keys(ICONS);
+  const cols = 8;
+  const rows = Math.ceil(names.length / cols);
+  const sheet = new Img(cols * T, rows * T);
+  const pos = {};
+  names.forEach((name, i) => {
+    const x = (i % cols) * T, y = Math.floor(i / cols) * T;
+    sheet.blit(ICONS[name](), x, y);
+    pos[name] = [x, y];
+  });
+  savePNG(sheet, OUT('icons.png'));
+
+  // 브라우저 탭 아이콘 (주사위 32×32)
+  const dice = ICONS.dice();
+  const fav = new Img(32, 32);
+  for (let y = 0; y < 32; y++) for (let x = 0; x < 32; x++) {
+    const s = (Math.floor(y / 2) * T + Math.floor(x / 2)) * 4;
+    fav.d.set(dice.d.subarray(s, s + 4), (y * 32 + x) * 4);
+  }
+  savePNG(fav, path.join(ROOT, 'public/favicon.png'));
+
+  // CSS: <i class="ico ico-dice"></i>, 크게는 style="--s:2"
+  const W = cols * T;
+  const at = (n) => `calc(${-pos[n][0]}px * var(--s, 1)) calc(${-pos[n][1]}px * var(--s, 1))`;
+  const css = [
+    '/* 자동 생성 파일 — scripts/make-art.js 가 만든다. 직접 고치지 말 것. */',
+    `.ico { display: inline-block; flex: none; width: calc(16px * var(--s, 1)); height: calc(16px * var(--s, 1)); vertical-align: middle;`,
+    `  background: url('/assets/icons.png') no-repeat; background-size: calc(${W}px * var(--s, 1)) auto; image-rendering: pixelated; }`,
+    ...names.map((n) => `.ico-${n} { background-position: ${at(n)}; }`),
+    '/* 방장 이름 앞 왕관 */',
+    `.tag.host .name::before { content: ''; display: inline-block; width: 16px; height: 16px; margin-right: 2px; vertical-align: -4px;`,
+    `  background: url('/assets/icons.png') no-repeat ${-pos.crown[0]}px ${-pos.crown[1]}px; background-size: ${W}px auto; image-rendering: pixelated; }`,
+    '',
+  ].join('\n');
+  fs.writeFileSync(path.join(ROOT, 'src/ui/icons.css'), css);
+  console.log('저장: src/ui/icons.css');
+}
+
 const tilesetImg = buildTileset();
+buildIcons();
 buildCharacters();
 const force = process.argv.includes('--force-map');
 for (const [name, build] of [['lobby', buildMap], ['room', buildRoomMap]]) {

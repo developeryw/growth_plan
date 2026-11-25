@@ -4,6 +4,9 @@ import { ref, get, onValue, update, remove } from 'firebase/database';
 import { connect } from '../net/firebase.js';
 import { ROOM_COUNT, ROOM_MAX } from '../net/RoomNet.js';
 import { GAME_BY_ID } from '../ui/gameMenu.js';
+import { icon } from '../ui/icons.js';
+import '../ui/pixel.css';
+import '../ui/icons.css';
 
 const $ = (id) => document.getElementById(id);
 const AREA_NAMES = { lobby: '로비', room1: '방 1', room2: '방 2', room3: '방 3', room4: '방 4' };
@@ -113,13 +116,13 @@ async function renderRooms() {
     const lines = [`인원 ${count}/${ROOM_MAX}`];
     if (count) {
       lines.push(`방장 ${await nameOf(r.host)}`);
-      lines.push(r.locked ? '🔒 잠김' : '🔓 열림');
-      lines.push(r.game ? `🎲 ${GAME_BY_ID[r.game.id]?.name || r.game.id}` : '게임 고르는 중');
+      lines.push(r.locked ? [icon('lock'), ' 잠김'] : [icon('unlock'), ' 열림']);
+      lines.push(r.game ? [icon('dice'), ` ${GAME_BY_ID[r.game.id]?.name || r.game.id}`] : '게임 고르는 중');
       if (r.state === 'disbanded') lines.push('해산 중');
     } else {
       lines.push('비어 있음');
     }
-    cards.push(el('div', { class: 'room' }, [el('b', { text: `방 ${n}` }), ...lines.map((t) => el('div', { text: t }))]));
+    cards.push(el('div', { class: 'room' }, [el('b', { text: `방 ${n}` }), ...lines.map((t) => (Array.isArray(t) ? el('div', {}, t) : el('div', { text: t })))]));
   }
   $('rooms').replaceChildren(...cards);
 }
@@ -152,7 +155,7 @@ async function renderUsers(uids) {
         },
       });
       const current = el('td', { text: await nameOf(u) });
-      return el('tr', {}, [current, el('td', {}, [input]), el('td', {}, [save]), el('td', online[u] ? { class: 'online', text: '● 접속 중' } : { text: '' })]);
+      return el('tr', {}, [current, el('td', {}, [input]), el('td', {}, [save]), (online[u] ? el('td', { class: 'online' }, [icon('dot'), ' 접속 중']) : el('td'))]);
     }),
   );
   $('user-list').replaceChildren(...rows);

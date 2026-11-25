@@ -4,6 +4,7 @@
 //   outfit = 흰색 점프수트 그림 → setTint()로 원하는 색을 입힌다
 //   tag    = 머리 위 이름·말풍선·리액션 (HTML이라 글자가 선명하다)
 import { REACTION_BY_TYPE, REACTION_MS } from '../data/reactions.js';
+import { icon } from '../ui/icons.js';
 
 export const DIRS = ['down', 'left', 'right', 'up'];
 export const SPEED = 80; // 초당 픽셀
@@ -131,10 +132,10 @@ export default class Player {
     this.tag.classList.toggle('host', isHost);
   }
 
-  // 머리 위 "🎲 ○○ 하는 중" (null이면 지움)
+  // 머리 위 "(주사위) ○○ 하는 중" (null이면 지움)
   setPlaying(gameName) {
     const el = this.tag.querySelector('.playing');
-    el.textContent = gameName ? `🎲 ${gameName} 하는 중` : '';
+    if (gameName) el.replaceChildren(icon('dice'), ` ${gameName} 하는 중`);
     el.hidden = !gameName;
   }
 
@@ -159,7 +160,7 @@ export default class Player {
       return;
     }
     this.reaction = type;
-    el.textContent = r.emoji;
+    el.replaceChildren(icon(r.type, 2)); // 32×32 도트 아이콘
     el.hidden = false;
     if (type === 'win') {
       this.hopTween = this.scene.tweens.add({ targets: this, hop: -6, duration: 150, yoyo: true, repeat: 4, ease: 'Quad.easeOut' });

@@ -6,6 +6,7 @@ import { openSoloMenu, GAME_BY_ID } from '../ui/gameMenu.js';
 import { openBoard } from '../ui/boardUi.js';
 import { openFeedback } from '../ui/feedbackUi.js';
 import * as hud from '../ui/hud.js';
+import { icon, setIconText } from '../ui/icons.js';
 
 const DOOR_DEPTH = 6; // 문 안쪽으로 이만큼(px) 걸어 들어가면 입장
 const DIR_VEC = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
@@ -51,7 +52,7 @@ export default class LobbyScene extends AreaScene {
 
     // 게시판: 클릭하거나 근처에서 E
     const b = this.objectByName('board');
-    this.board = { x: b.x, y: b.y, w: b.width, h: b.height, label: this.makeLabel('board-label', '📌 게시판') };
+    this.board = { x: b.x, y: b.y, w: b.width, h: b.height, label: this.makeLabel('board-label', '게시판', 'pin') };
     this.add
       .zone(b.x + b.width / 2, b.y + b.height / 2, b.width, b.height)
       .setInteractive({ useHandCursor: true })
@@ -59,7 +60,7 @@ export default class LobbyScene extends AreaScene {
 
     // 건의함 우체통: 클릭하거나 근처에서 E
     const m = this.objectByName('mailbox');
-    this.mailbox = { x: m.x, y: m.y, w: m.width, h: m.height, label: this.makeLabel('board-label', '📮 건의함') };
+    this.mailbox = { x: m.x, y: m.y, w: m.width, h: m.height, label: this.makeLabel('board-label', '건의함', 'mailbox') };
     this.add
       .zone(m.x + m.width / 2, m.y + m.height / 2, m.width, m.height)
       .setInteractive({ useHandCursor: true })
@@ -79,16 +80,17 @@ export default class LobbyScene extends AreaScene {
     return '로비';
   }
 
-  // ── 문 위 "방 1 · 3/6 🔒" 표시 ──
+  // ── 문 위 "방 1 · 3/6 (자물쇠)" 표시 ──
   makeDoorLabel() {
     return this.makeLabel('door-label', '');
   }
 
   // 맵 위에 띄우는 HTML 이름표
-  makeLabel(className, text) {
+  makeLabel(className, text, iconName) {
     const el = document.createElement('div');
     el.className = className;
-    el.textContent = text;
+    if (iconName) setIconText(el, iconName, text);
+    else el.textContent = text;
     document.getElementById('tags').appendChild(el);
     this.cleanups.push(() => el.remove());
     return el;
@@ -117,7 +119,7 @@ export default class LobbyScene extends AreaScene {
     this.boardOpen = false;
     if (!this.sys.isActive()) return;
     this.setTyping(false);
-    if (sent) hud.toast('건의가 전달됐어요. 고마워요! 📮');
+    if (sent) hud.toast('건의가 전달됐어요. 고마워요!');
   }
 
   async openBoard() {
@@ -154,7 +156,7 @@ export default class LobbyScene extends AreaScene {
     for (const d of this.doors) {
       const count = this.roomCounts[d.room] || 0;
       const locked = count > 0 && this.roomLocks[d.room];
-      d.label.textContent = `방 ${d.room} · ${count}/${ROOM_MAX}${locked ? ' 🔒' : ''}`;
+      d.label.replaceChildren(icon('door'), ` 방 ${d.room} · ${count}/${ROOM_MAX}`, ...(locked ? [' ', icon('lock')] : []));
       d.label.classList.toggle('full', count >= ROOM_MAX || Boolean(locked));
     }
   }

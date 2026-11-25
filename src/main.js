@@ -7,6 +7,8 @@ import Session from './net/Session.js';
 import { getProfile, saveProfile } from './data/profile.js';
 import { openAvatarDialog } from './ui/avatarDialog.js';
 import * as hud from './ui/hud.js';
+import './ui/pixel.css';
+import './ui/icons.css';
 
 async function boot() {
   hud.init();

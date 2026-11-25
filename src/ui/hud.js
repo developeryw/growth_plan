@@ -1,6 +1,7 @@
 // 화면 위 HTML UI: 안내 문구, 앉기 버튼, 채팅창, 리액션 안내, 알림
 // 버튼·채팅 처리는 지금 보고 있는 장면(로비/방)이 bind()로 연결한다.
 import { REACTIONS } from '../data/reactions.js';
+import { iconHtml } from './icons.js';
 
 const $ = (id) => document.getElementById(id);
 const MODALS = ['notice', 'avatar', 'games', 'kiosk', 'game-modal', 'delegate', 'board', 'feedback'];
@@ -92,7 +93,7 @@ export function toast(text, ms = 3000) {
 }
 
 function renderReactionHelp() {
-  $('reactions').innerHTML = REACTIONS.map((r) => `<div><b>${r.key}</b> ${r.emoji} ${r.label}</div>`).join('');
+  $('reactions').innerHTML = REACTIONS.map((r) => `<div><b>${r.key}</b> ${iconHtml(r.type)} ${r.label}</div>`).join('');
 }
 
 export function clearChatLog() {

@@ -5,34 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
     <title>관리자 · 온라인 보드게임 카페</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠</text></svg>" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <style>
       :root { --bg: #1e1a16; --panel: #2a1a0e; --line: #6e4a2d; --text: #f3e3c3; --muted: #c9b48f; --gold: #d4ad3a; --red: #e06060; }
       * { box-sizing: border-box; }
-      body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 sans-serif; }
+      body { margin: 0; background: var(--bg); color: var(--text); font: 12px/1.5 Galmuri11, sans-serif; }
       main { max-width: 980px; margin: 0 auto; padding: 16px; }
       header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
-      header h1 { margin: 0; font-size: 22px; flex: 1; }
+      header h1 { margin: 0; font-size: 24px; font-family: Galmuri11, sans-serif; flex: 1; }
       a { color: var(--gold); }
       section { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; }
-      section h2 { margin: 0 0 10px; font-size: 16px; display: flex; align-items: center; gap: 8px; }
-      section h2 .sub { font-weight: normal; color: var(--muted); font-size: 13px; }
+      section h2 { margin: 0 0 10px; font-size: 15px; font-family: Galmuri14, sans-serif; font-weight: 400; display: flex; align-items: center; gap: 8px; }
+      section h2 .sub { font-weight: normal; color: var(--muted); font-size: 12px; font-family: Galmuri11, sans-serif; }
       [hidden] { display: none !important; }
-      button { cursor: pointer; padding: 5px 12px; border: 1px solid var(--gold); border-radius: 6px; background: transparent; color: var(--gold); font: bold 13px sans-serif; }
+      button { cursor: pointer; padding: 5px 12px; border: 1px solid var(--gold); border-radius: 6px; background: transparent; color: var(--gold); font: bold 12px Galmuri11, sans-serif; }
       button.danger { border-color: var(--red); color: var(--red); }
       button.primary { background: var(--gold); color: #2a1a0e; }
-      input { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; background: #1e140b; color: var(--text); font-size: 13px; }
+      input { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; background: #1e140b; color: var(--text); font-size: 12px; font-family: Galmuri11, sans-serif; }
       code { background: #1e140b; padding: 2px 6px; border-radius: 4px; word-break: break-all; }
-      .big { font-size: 34px; font-weight: bold; color: var(--gold); }
+      .big { font-size: 30px; font-family: Galmuri14, sans-serif; font-weight: 400; font-weight: bold; color: var(--gold); }
       .stats { display: flex; gap: 16px; flex-wrap: wrap; align-items: baseline; }
       .chip { padding: 2px 10px; border-radius: 99px; background: #3a2717; }
       .rooms { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
       .room { border: 1px solid var(--line); border-radius: 8px; padding: 10px; }
-      .room b { font-size: 15px; }
+      .room b { font-size: 15px; font-family: Galmuri14, sans-serif; font-weight: 400; }
       .room div { color: var(--muted); }
       table { width: 100%; border-collapse: collapse; }
       th, td { text-align: left; padding: 6px 4px; border-bottom: 1px solid #3a2717; vertical-align: middle; }
-      th { color: var(--muted); font-weight: normal; font-size: 12px; }
+      th { color: var(--muted); font-weight: normal; font-size: 12px; font-family: Galmuri11, sans-serif; }
       td input { width: 140px; }
       .online { color: #7fd07f; }
       .posts { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
@@ -41,7 +41,7 @@
       .fb { border-bottom: 1px solid #3a2717; padding: 10px 0; display: flex; gap: 12px; }
       .fb:last-child { border-bottom: 0; }
       .fb .body { flex: 1; white-space: pre-wrap; word-break: break-word; }
-      .fb .meta { color: var(--muted); font-size: 12px; margin-bottom: 2px; }
+      .fb .meta { color: var(--muted); font-size: 12px; font-family: Galmuri11, sans-serif; margin-bottom: 2px; }
       .empty { color: var(--muted); }
       .steps li { margin-bottom: 6px; }
     </style>
@@ -49,7 +49,7 @@
   <body>
     <main>
       <header>
-        <h1>🛠 관리자 화면</h1>
+        <h1><i class="ico ico-wrench" aria-hidden="true"></i> 관리자 화면</h1>
         <a id="back" href="../">← 카페로 돌아가기</a>
       </header>
 
@@ -57,7 +57,7 @@
 
       <!-- 관리자가 아닐 때: 지정 방법 안내 -->
       <section id="not-admin" hidden>
-        <h2>🔐 관리자로 지정되지 않은 브라우저예요</h2>
+        <h2><i class="ico ico-lock" aria-hidden="true"></i> 관리자로 지정되지 않은 브라우저예요</h2>
         <p>이 브라우저의 사용자 번호(uid): <code id="my-uid"></code> <button type="button" id="copy-uid">복사</button></p>
         <ol class="steps">
           <li>Firebase 콘솔 → <b>Realtime Database</b> → <b>데이터</b> 탭을 열어요.</li>
@@ -69,7 +69,7 @@
 
       <div id="admin" hidden>
         <section>
-          <h2>👥 접속자</h2>
+          <h2><i class="ico ico-people" aria-hidden="true"></i> 접속자</h2>
           <div class="stats"><span class="big" id="online-count">0</span><span>명 접속 중</span><span id="area-chips"></span></div>
           <table>
             <thead><tr><th>이름</th><th>있는 곳</th><th>접속 시각</th></tr></thead>
@@ -78,12 +78,12 @@
         </section>
 
         <section>
-          <h2>🚪 단체 게임방</h2>
+          <h2><i class="ico ico-door" aria-hidden="true"></i> 단체 게임방</h2>
           <div class="rooms" id="rooms"></div>
         </section>
 
         <section>
-          <h2>✏️ 닉네임 강제 변경 <span class="sub">접속 중인 사람 화면에도 바로 반영돼요</span></h2>
+          <h2><i class="ico ico-pencil" aria-hidden="true"></i> 닉네임 강제 변경 <span class="sub">접속 중인 사람 화면에도 바로 반영돼요</span></h2>
           <p><button type="button" id="load-users">전체 사용자 불러오기</button> <span class="empty" id="users-info">접속 중인 사람만 보여요.</span></p>
           <table>
             <thead><tr><th>현재 이름</th><th>새 이름</th><th></th><th>상태</th></tr></thead>
@@ -92,13 +92,13 @@
         </section>
 
         <section>
-          <h2>📌 게시판 <span class="sub">비밀번호 없이 삭제할 수 있어요</span></h2>
+          <h2><i class="ico ico-pin" aria-hidden="true"></i> 게시판 <span class="sub">비밀번호 없이 삭제할 수 있어요</span></h2>
           <p><button type="button" id="load-posts">게시물 불러오기</button></p>
           <div class="posts" id="post-list"></div>
         </section>
 
         <section>
-          <h2>📮 건의함 <span class="sub" id="fb-count"></span></h2>
+          <h2><i class="ico ico-mailbox" aria-hidden="true"></i> 건의함 <span class="sub" id="fb-count"></span></h2>
           <div id="fb-list"></div>
         </section>
       </div>
