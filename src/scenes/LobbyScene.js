@@ -4,6 +4,7 @@ import AreaScene from './AreaScene.js';
 import { tryEnter, ROOM_MAX } from '../net/RoomNet.js';
 import { openSoloMenu, GAME_BY_ID } from '../ui/gameMenu.js';
 import { openBoard } from '../ui/boardUi.js';
+import { openFeedback } from '../ui/feedbackUi.js';
 import * as hud from '../ui/hud.js';
 
 const DOOR_DEPTH = 6; // 문 안쪽으로 이만큼(px) 걸어 들어가면 입장
@@ -56,6 +57,14 @@ export default class LobbyScene extends AreaScene {
       .setInteractive({ useHandCursor: true })
       .on('pointerdown', () => this.openBoard());
 
+    // 건의함 우체통: 클릭하거나 근처에서 E
+    const m = this.objectByName('mailbox');
+    this.mailbox = { x: m.x, y: m.y, w: m.width, h: m.height, label: this.makeLabel('board-label', '📮 건의함') };
+    this.add
+      .zone(m.x + m.width / 2, m.y + m.height / 2, m.width, m.height)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => this.openFeedback());
+
     // 시작 위치: 처음이면 입구, 방에서 나왔으면 그 방 문 앞
     const door = this.doors.find((d) => d.room === this.fromRoom);
     const spawn = door ? door.spawn : this.objectByName('spawn');
@@ -89,8 +98,26 @@ export default class LobbyScene extends AreaScene {
   nearInteraction() {
     const { x, y } = this.player.feet;
     const b = this.board;
-    if (x < b.x - 8 || x > b.x + b.w + 8 || y > b.y + b.h + 28) return null;
-    return { hint: 'E: 게시판 보기', action: () => this.openBoard() };
+    if (x >= b.x - 8 && x <= b.x + b.w + 8 && y <= b.y + b.h + 28) {
+      return { hint: 'E: 게시판 보기', action: () => this.openBoard() };
+    }
+    const m = this.mailbox;
+    if (Math.hypot(x - (m.x + m.w / 2), y - (m.y + m.h / 2)) < 26) {
+      return { hint: 'E: 건의함에 건의하기', action: () => this.openFeedback() };
+    }
+    return null;
+  }
+
+  async openFeedback() {
+    if (this.boardOpen || this.leaving) return;
+    if (!this.session) return hud.toast('혼자 모드에서는 건의함을 쓸 수 없어요.');
+    this.boardOpen = true;
+    this.setTyping(true);
+    const sent = await openFeedback({ db: this.session.db, uid: this.session.uid, name: this.profile.name });
+    this.boardOpen = false;
+    if (!this.sys.isActive()) return;
+    this.setTyping(false);
+    if (sent) hud.toast('건의가 전달됐어요. 고마워요! 📮');
   }
 
   async openBoard() {
@@ -134,8 +161,10 @@ export default class LobbyScene extends AreaScene {
 
   // ── 매 프레임: 문 이름표 위치, 문으로 들어가는지 확인 ──
   areaUpdate() {
-    const bp = this.toScreen(this.board.x + this.board.w / 2, this.board.y);
-    this.board.label.style.transform = `translate(${Math.round(bp.x)}px, ${Math.round(bp.y)}px)`;
+    for (const thing of [this.board, this.mailbox]) {
+      const tp = this.toScreen(thing.x + thing.w / 2, thing.y);
+      thing.label.style.transform = `translate(${Math.round(tp.x)}px, ${Math.round(tp.y)}px)`;
+    }
     for (const d of this.doors) {
       const p = this.toScreen(d.rect.x + d.rect.w / 2, d.rect.y);
       d.label.style.transform = `translate(${Math.round(p.x)}px, ${Math.round(p.y)}px)`;

@@ -29,11 +29,13 @@ export function saveProfile(db, uid, profile) {
   return set(ref(db, `users/${uid}`), profile);
 }
 
-// 다른 사람의 프로필 (처음 볼 때 한 번만 읽고, 바꿨다는 소식이 오면 다시 읽는다)
-const cache = new Map();
-export function fetchProfile(db, uid, refresh = false) {
-  if (refresh || !cache.has(uid)) {
-    cache.set(uid, get(ref(db, `users/${uid}`)).then((s) => s.val() || randomProfile()));
+// 다른 사람의 프로필 (처음 볼 때 한 번만 읽고, 바꿨다는 표시 version(profileV)이 달라지면 다시 읽는다)
+const cache = new Map(); // uid → { version, promise }
+export function fetchProfile(db, uid, version = 0) {
+  const hit = cache.get(uid);
+  if (!hit || hit.version !== version) {
+    const promise = get(ref(db, `users/${uid}`)).then((s) => s.val() || randomProfile());
+    cache.set(uid, { version, promise });
   }
-  return cache.get(uid);
+  return cache.get(uid).promise;
 }

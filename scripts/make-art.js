@@ -447,6 +447,20 @@ function corkBoard(part, seed) {
   return im;
 }
 
+// 건의함 우체통
+function mailbox() {
+  const im = new Img(T, T);
+  im.ellipse(8, 15, 5, 1.5, SHADOW);
+  im.rect(7, 9, 2, 6, '#5c3b23');
+  im.rect(2, 2, 11, 8, '#7a1f2b');
+  im.rect(3, 3, 9, 6, '#b03a3a');
+  im.rect(3, 3, 9, 1, '#d05050');
+  im.rect(5, 5, 5, 1, '#2a1a0e');
+  im.rect(13, 1, 1, 5, '#5c3b23');
+  im.rect(13, 1, 3, 2, '#d4ad3a');
+  return im;
+}
+
 const TILES = [
   ['floorA', () => floor(0)],
   ['floorB', () => floor(2)],
@@ -501,6 +515,7 @@ const TILES = [
   ['corkM', () => corkBoard(1, 1), true],
   ['corkM2', () => corkBoard(1, 2), true],
   ['corkR', () => corkBoard(2, 0), true],
+  ['mailbox', mailbox, true],
 ];
 const COLS = 8;
 const GID = Object.fromEntries(TILES.map(([name], i) => [name, i + 1]));
@@ -767,6 +782,7 @@ function buildMap(tilesetImg) {
   ];
   for (const [x, y, , , tile] of seats) set(furnL, x, y, tile);
   set(furnL, 13, 10, 'table');
+  set(furnL, 17, 17, 'mailbox'); // 입구 오른쪽 건의함
   for (const [x, y] of [[1, 2], [26, 2], [1, 18], [26, 18]]) set(furnL, x, y, 'plant');
 
   let objId = 1;
@@ -787,6 +803,8 @@ function buildMap(tilesetImg) {
         { name: 'kind', type: 'string', value: kind },
       ],
     })),
+    // 건의함 우체통
+    { id: objId++, name: 'mailbox', type: 'mailbox', x: 17 * T, y: 17 * T, width: T, height: T, rotation: 0, visible: true },
     // 게시판 (클릭하거나 근처에서 E)
     { id: objId++, name: 'board', type: 'board', x: 12 * T, y: 1 * T, width: 4 * T, height: T, rotation: 0, visible: true },
     // 단체 게임방 문: facing = 방에서 나왔을 때 바라보는 방향

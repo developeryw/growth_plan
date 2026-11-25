@@ -63,7 +63,9 @@ export function openKiosk({ games, onVote, onPlay }) {
   };
   m.addEventListener('close', close);
   $('kiosk-close').onclick = close;
-  m.onclick = (e) => e.target === m && close();
+  m.onclick = (e) => {
+    if (e.target === m) close();
+  };
   m.hidden = false;
   m.focus();
   if (kiosk.state) renderKiosk(kiosk.state);

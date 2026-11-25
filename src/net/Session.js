@@ -52,6 +52,11 @@ export default class Session {
     return () => this.reconnectHandlers.delete(fn);
   }
 
+  // 내 프로필(users/{uid})이 바뀌면 알려 준다 (예: 관리자가 닉네임을 바꿈)
+  onProfileChange(fn) {
+    return onValue(ref(this.db, `users/${this.uid}`), (snap) => snap.exists() && fn(snap.val()));
+  }
+
   onKicked(fn) {
     this.kickHandlers.add(fn);
     return () => this.kickHandlers.delete(fn);

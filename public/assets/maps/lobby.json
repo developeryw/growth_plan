@@ -11,7 +11,7 @@
  "tilewidth": 16,
  "tileheight": 16,
  "nextlayerid": 6,
- "nextobjectid": 19,
+ "nextobjectid": 20,
  "layers": [
   {
    "id": 1,
@@ -2230,7 +2230,7 @@
     0,
     0,
     0,
-    0,
+    54,
     0,
     0,
     0,
@@ -2601,6 +2601,17 @@
     },
     {
      "id": 14,
+     "name": "mailbox",
+     "type": "mailbox",
+     "x": 272,
+     "y": 272,
+     "width": 16,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 15,
      "name": "board",
      "type": "board",
      "x": 192,
@@ -2611,7 +2622,7 @@
      "visible": true
     },
     {
-     "id": 15,
+     "id": 16,
      "name": "room-door-1",
      "type": "door",
      "x": 0,
@@ -2634,7 +2645,7 @@
      ]
     },
     {
-     "id": 16,
+     "id": 17,
      "name": "room-door-2",
      "type": "door",
      "x": 0,
@@ -2657,7 +2668,7 @@
      ]
     },
     {
-     "id": 17,
+     "id": 18,
      "name": "room-door-3",
      "type": "door",
      "x": 432,
@@ -2680,7 +2691,7 @@
      ]
     },
     {
-     "id": 18,
+     "id": 19,
      "name": "room-door-4",
      "type": "door",
      "x": 432,
@@ -3055,6 +3066,16 @@
     },
     {
      "id": 52,
+     "properties": [
+      {
+       "name": "collides",
+       "type": "bool",
+       "value": true
+      }
+     ]
+    },
+    {
+     "id": 53,
      "properties": [
       {
        "name": "collides",

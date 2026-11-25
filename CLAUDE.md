@@ -92,7 +92,7 @@ boardgames.zone/ko, yesnodetective.com/ko, ko.puzzle-loop.com, semantle-ko.newsj
 newmantle.kr, quoridorgame.com/ko/wall-go/, murdoku.com/ko, devil.haplate.com, quoridorgame.com/ko
 
 ### 관리자·건의
-- `admins/{uid}: true`는 Firebase 콘솔에서 수동 지정.
+- `admins/{uid}: true`는 Firebase 콘솔에서 수동 지정. 관리자 화면 주소는 `사이트주소/admin/` (관리자가 아니면 그 브라우저의 uid와 지정 방법을 보여 준다).
 - `/admin` 화면: 접속자 수, 방 상태, 닉네임 강제 변경, 게시물 삭제.
 - 로비 우체통(건의함) → `feedback/{id}` (관리자만 읽기).
 

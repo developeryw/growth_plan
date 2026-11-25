@@ -5,7 +5,7 @@
     "users": {
       "$uid": {
         ".read": "auth != null",
-        ".write": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && (auth.uid === $uid || root.child('admins/' + auth.uid).val() === true)",
         ".validate": "newData.hasChildren(['name', 'gender', 'color'])",
         "name": {
           ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 16"
@@ -25,7 +25,8 @@
       "$uid": {
         ".read": "auth != null && auth.uid === $uid",
         ".write": "auth != null && auth.uid === $uid"
-      }
+      },
+      ".read": "auth != null && root.child('admins/' + auth.uid).val() === true"
     },
     "lobby": {
       "players": {
@@ -114,7 +115,7 @@
       "posts": {
         ".read": "auth != null",
         "$slot": {
-          ".write": "auth != null && $slot.matches(/^[0-9]$/) && ((newData.exists() && (!data.exists() || (root.child('board/posts/0/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/1/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/2/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/3/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/4/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/5/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/6/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/7/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/8/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/9/createdAt').val() >= data.child('createdAt').val()))) || (!newData.exists() && data.exists() && root.child('board/deleteTickets/' + $slot + '/' + auth.uid).val() === root.child('board/postSecrets/' + $slot).val()))",
+          ".write": "auth != null && $slot.matches(/^[0-9]$/) && ((newData.exists() && (!data.exists() || (root.child('board/posts/0/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/1/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/2/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/3/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/4/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/5/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/6/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/7/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/8/createdAt').val() >= data.child('createdAt').val() && root.child('board/posts/9/createdAt').val() >= data.child('createdAt').val()))) || (!newData.exists() && data.exists() && root.child('board/deleteTickets/' + $slot + '/' + auth.uid).val() === root.child('board/postSecrets/' + $slot).val()) || (!newData.exists() && root.child('admins/' + auth.uid).val() === true))",
           ".validate": "newData.hasChildren(['image', 'name', 'date', 'createdAt'])",
           "image": {
             ".validate": "newData.isString() && newData.val().beginsWith('data:image/') && newData.val().length <= 140000"
@@ -135,7 +136,7 @@
       },
       "postSecrets": {
         "$slot": {
-          ".write": "auth != null && ((newData.exists() && newData.parent().parent().child('posts/' + $slot + '/createdAt').val() === now) || (!newData.exists() && root.child('board/deleteTickets/' + $slot + '/' + auth.uid).val() === root.child('board/postSecrets/' + $slot).val()))",
+          ".write": "auth != null && ((newData.exists() && newData.parent().parent().child('posts/' + $slot + '/createdAt').val() === now) || (!newData.exists() && root.child('board/deleteTickets/' + $slot + '/' + auth.uid).val() === root.child('board/postSecrets/' + $slot).val()) || (!newData.exists() && root.child('admins/' + auth.uid).val() === true))",
           ".validate": "newData.isString() && newData.val().matches(/^[0-9]{4}$/)"
         }
       },
@@ -146,6 +147,33 @@
             ".write": "auth != null && auth.uid === $uid",
             ".validate": "newData.isString() && newData.val().matches(/^[0-9]{4}$/)"
           }
+        }
+      }
+    },
+    "admins": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid"
+      }
+    },
+    "feedback": {
+      ".read": "auth != null && root.child('admins/' + auth.uid).val() === true",
+      "$id": {
+        ".write": "auth != null && ((!data.exists() && newData.child('uid').val() === auth.uid) || (!newData.exists() && root.child('admins/' + auth.uid).val() === true))",
+        ".validate": "newData.hasChildren(['uid', 'name', 'text', 'at'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length <= 16"
+        },
+        "text": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 500"
+        },
+        "at": {
+          ".validate": "newData.val() === now"
+        },
+        "$other": {
+          ".validate": false
+        },
+        "uid": {
+          ".validate": "newData.val() === auth.uid"
         }
       }
     }

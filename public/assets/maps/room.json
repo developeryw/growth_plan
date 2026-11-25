@@ -1614,6 +1614,16 @@
        "value": true
       }
      ]
+    },
+    {
+     "id": 53,
+     "properties": [
+      {
+       "name": "collides",
+       "type": "bool",
+       "value": true
+      }
+     ]
     }
    ]
   }

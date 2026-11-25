@@ -94,7 +94,10 @@ export default class AreaScene extends Phaser.Scene {
     this.scale.on('resize', this.fitCamera, this);
     this.cameras.main.fadeIn(250);
 
-    if (this.session) this.cleanups.push(this.session.onKicked(() => this.onKicked()));
+    if (this.session) {
+      this.cleanups.push(this.session.onKicked(() => this.onKicked()));
+      this.cleanups.push(this.session.onProfileChange((p) => this.applyServerProfile(p)));
+    }
     this.events.once('shutdown', () => this.shutdownArea());
   }
 
@@ -226,7 +229,7 @@ export default class AreaScene extends Phaser.Scene {
   async addRemote(uid, state) {
     this.loading.set(uid, state);
     this.onMemberState(uid, state);
-    const profile = await fetchProfile(this.session.db, uid);
+    const profile = await fetchProfile(this.session.db, uid, state.profileV ?? 0);
     // 프로필을 불러오는 사이에 나갔거나, 상태가 바뀌었을 수 있다
     if (!this.loading.has(uid) || this.remotes.has(uid) || !this.sys.isActive()) return;
     const latest = this.loading.get(uid);
@@ -264,7 +267,7 @@ export default class AreaScene extends Phaser.Scene {
     if (first || s.playing !== prev.playing) p.setPlaying(GAME_BY_ID[s.playing]?.name ?? null);
     // 아바타를 바꿨으면 프로필을 다시 읽어 모습을 바꾼다
     if (!first && s.profileV !== prev.profileV) {
-      fetchProfile(this.session.db, r.uid, true).then((pf) => {
+      fetchProfile(this.session.db, r.uid, s.profileV ?? 0).then((pf) => {
         const cur = this.remotes.get(r.uid);
         if (!cur) return;
         cur.profile = pf;
@@ -360,9 +363,10 @@ export default class AreaScene extends Phaser.Scene {
     const profile = await openAvatarDialog(this.profile, { title: '아바타 변경', submitText: '저장', cancellable: true });
     this.setTyping(false);
     if (!profile || !this.sys.isActive()) return;
-    if (this.session) await saveProfile(this.session.db, this.session.uid, profile);
+    // 저장하기 전에 먼저 바꿔 둔다 (내가 저장한 것을 '관리자가 바꿨다'로 착각하지 않도록)
     this.profile = profile;
     this.registry.set('profile', profile);
+    if (this.session) await saveProfile(this.session.db, this.session.uid, profile);
     this.player.setLook(profile);
     this.updateStatus();
     // 다른 사람들은 profileV가 바뀐 것을 보고 내 프로필을 다시 읽는다
@@ -371,6 +375,19 @@ export default class AreaScene extends Phaser.Scene {
   }
 
   onProfileChanged() {}
+
+  // DB의 내 프로필이 바뀌었을 때 (관리자가 닉네임을 바꾼 경우 등)
+  applyServerProfile(p) {
+    const cur = this.profile;
+    if (p.name === cur.name && p.gender === cur.gender && p.color === cur.color) return;
+    this.profile = { name: p.name, gender: p.gender, color: p.color };
+    this.registry.set('profile', this.profile);
+    this.player.setLook(this.profile);
+    this.updateStatus();
+    this.net?.send({ profileV: Date.now() });
+    this.onProfileChanged();
+    if (p.name !== cur.name) hud.toast(`닉네임이 '${p.name}'(으)로 바뀌었어요.`);
+  }
 
   // ── 좌석·상호작용 ──
   findNearSeat() {
